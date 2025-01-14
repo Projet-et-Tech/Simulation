@@ -1,0 +1,20 @@
+[0.010s] Invoking command in '/home/ws/tests/ws_robot/build/robot': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --build /home/ws/tests/ws_robot/build/robot -- -j8 -l8
+[0.039s] Invoked command in '/home/ws/tests/ws_robot/build/robot' returned '0': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --build /home/ws/tests/ws_robot/build/robot -- -j8 -l8
+[0.064s] Invoking command in '/home/ws/tests/ws_robot/build/robot': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --install /home/ws/tests/ws_robot/build/robot
+[0.070s] -- Install configuration: ""
+[0.070s] -- Up-to-date: /home/ws/tests/ws_robot/install/robot/share/ament_index/resource_index/package_run_dependencies/robot
+[0.070s] -- Up-to-date: /home/ws/tests/ws_robot/install/robot/share/ament_index/resource_index/parent_prefix_path/robot
+[0.071s] -- Up-to-date: /home/ws/tests/ws_robot/install/robot/share/robot/environment/ament_prefix_path.sh
+[0.071s] -- Up-to-date: /home/ws/tests/ws_robot/install/robot/share/robot/environment/ament_prefix_path.dsv
+[0.071s] -- Up-to-date: /home/ws/tests/ws_robot/install/robot/share/robot/environment/path.sh
+[0.071s] -- Up-to-date: /home/ws/tests/ws_robot/install/robot/share/robot/environment/path.dsv
+[0.071s] -- Up-to-date: /home/ws/tests/ws_robot/install/robot/share/robot/local_setup.bash
+[0.071s] -- Up-to-date: /home/ws/tests/ws_robot/install/robot/share/robot/local_setup.sh
+[0.071s] -- Up-to-date: /home/ws/tests/ws_robot/install/robot/share/robot/local_setup.zsh
+[0.071s] -- Up-to-date: /home/ws/tests/ws_robot/install/robot/share/robot/local_setup.dsv
+[0.071s] -- Up-to-date: /home/ws/tests/ws_robot/install/robot/share/robot/package.dsv
+[0.071s] -- Up-to-date: /home/ws/tests/ws_robot/install/robot/share/ament_index/resource_index/packages/robot
+[0.071s] -- Up-to-date: /home/ws/tests/ws_robot/install/robot/share/robot/cmake/robotConfig.cmake
+[0.071s] -- Up-to-date: /home/ws/tests/ws_robot/install/robot/share/robot/cmake/robotConfig-version.cmake
+[0.071s] -- Up-to-date: /home/ws/tests/ws_robot/install/robot/share/robot/package.xml
+[0.073s] Invoked command in '/home/ws/tests/ws_robot/build/robot' returned '0': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --install /home/ws/tests/ws_robot/build/robot

@@ -1,0 +1,26 @@
+-- Install configuration: ""
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/my_bot/config
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/my_bot/config/empty.yaml
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/my_bot/description
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/my_bot/description/example_robot.urdf.xacro
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/my_bot/description/example_include.xacro
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/my_bot/description/example_gazebo.xacro
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/my_bot/launch
+-- Installing: /home/ws/tests/dev_ws2/install/my_bot/share/my_bot/launch/rsp.launch.py
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/my_bot/worlds
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/my_bot/worlds/empty.world
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/ament_index/resource_index/package_run_dependencies/my_bot
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/ament_index/resource_index/parent_prefix_path/my_bot
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/my_bot/environment/ament_prefix_path.sh
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/my_bot/environment/ament_prefix_path.dsv
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/my_bot/environment/path.sh
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/my_bot/environment/path.dsv
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/my_bot/local_setup.bash
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/my_bot/local_setup.sh
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/my_bot/local_setup.zsh
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/my_bot/local_setup.dsv
+-- Installing: /home/ws/tests/dev_ws2/install/my_bot/share/my_bot/package.dsv
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/ament_index/resource_index/packages/my_bot
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/my_bot/cmake/my_botConfig.cmake
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/my_bot/cmake/my_botConfig-version.cmake
+-- Up-to-date: /home/ws/tests/dev_ws2/install/my_bot/share/my_bot/package.xml

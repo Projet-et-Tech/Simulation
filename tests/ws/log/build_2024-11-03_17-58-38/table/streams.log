@@ -1,0 +1,38 @@
+[0.009s] Invoking command in '/home/ws/tests/ws/build/table': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/iron /usr/bin/cmake --build /home/ws/tests/ws/build/table -- -j8 -l8
+[0.025s] -- Found ament_cmake: 2.0.6 (/opt/ros/iron/share/ament_cmake/cmake)
+[0.115s] -- Found ament_lint_auto: 0.14.4 (/opt/ros/iron/share/ament_lint_auto/cmake)
+[0.164s] -- Added test 'flake8' to check Python code syntax and style conventions
+[0.164s] -- Configured 'flake8' exclude dirs and/or files: 
+[0.164s] -- Added test 'lint_cmake' to check CMake code style
+[0.164s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[0.165s] -- Added test 'xmllint' to check XML markup files
+[0.165s] -- Configuring done
+[0.167s] -- Generating done
+[0.168s] -- Build files have been written to: /home/ws/tests/ws/build/table
+[0.183s] Invoked command in '/home/ws/tests/ws/build/table' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/iron /usr/bin/cmake --build /home/ws/tests/ws/build/table -- -j8 -l8
+[0.213s] Invoking command in '/home/ws/tests/ws/build/table': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/iron /usr/bin/cmake --install /home/ws/tests/ws/build/table
+[0.220s] -- Install configuration: ""
+[0.220s] -- Installing: /home/ws/tests/ws/install/table/share/table/description
+[0.220s] -- Installing: /home/ws/tests/ws/install/table/share/table/description/table.obj
+[0.220s] -- Installing: /home/ws/tests/ws/install/table/share/table/description/gazebo.xacro
+[0.220s] -- Installing: /home/ws/tests/ws/install/table/share/table/description/table.urdf
+[0.220s] -- Installing: /home/ws/tests/ws/install/table/share/table/description/table.mtl
+[0.221s] -- Installing: /home/ws/tests/ws/install/table/share/table/description/texture.png
+[0.225s] -- Installing: /home/ws/tests/ws/install/table/share/table/launch
+[0.225s] -- Installing: /home/ws/tests/ws/install/table/share/table/launch/display.launch.py
+[0.225s] -- Up-to-date: /home/ws/tests/ws/install/table/share/ament_index/resource_index/package_run_dependencies/table
+[0.225s] -- Installing: /home/ws/tests/ws/install/table/share/ament_index/resource_index/parent_prefix_path/table
+[0.226s] -- Up-to-date: /home/ws/tests/ws/install/table/share/table/environment/ament_prefix_path.sh
+[0.226s] -- Up-to-date: /home/ws/tests/ws/install/table/share/table/environment/ament_prefix_path.dsv
+[0.226s] -- Up-to-date: /home/ws/tests/ws/install/table/share/table/environment/path.sh
+[0.226s] -- Up-to-date: /home/ws/tests/ws/install/table/share/table/environment/path.dsv
+[0.226s] -- Up-to-date: /home/ws/tests/ws/install/table/share/table/local_setup.bash
+[0.226s] -- Up-to-date: /home/ws/tests/ws/install/table/share/table/local_setup.sh
+[0.226s] -- Up-to-date: /home/ws/tests/ws/install/table/share/table/local_setup.zsh
+[0.226s] -- Up-to-date: /home/ws/tests/ws/install/table/share/table/local_setup.dsv
+[0.226s] -- Installing: /home/ws/tests/ws/install/table/share/table/package.dsv
+[0.226s] -- Up-to-date: /home/ws/tests/ws/install/table/share/ament_index/resource_index/packages/table
+[0.226s] -- Up-to-date: /home/ws/tests/ws/install/table/share/table/cmake/tableConfig.cmake
+[0.226s] -- Up-to-date: /home/ws/tests/ws/install/table/share/table/cmake/tableConfig-version.cmake
+[0.226s] -- Up-to-date: /home/ws/tests/ws/install/table/share/table/package.xml
+[0.228s] Invoked command in '/home/ws/tests/ws/build/table' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/iron /usr/bin/cmake --install /home/ws/tests/ws/build/table

@@ -1,0 +1,2 @@
+Invoking command in '/home/ws/tests/ws/build/table': /usr/bin/cmake /home/ws/tests/ws/src/table -DCMAKE_INSTALL_PREFIX=/home/ws/tests/ws/install/table
+Invoked command in '/home/ws/tests/ws/build/table' returned '1': /usr/bin/cmake /home/ws/tests/ws/src/table -DCMAKE_INSTALL_PREFIX=/home/ws/tests/ws/install/table

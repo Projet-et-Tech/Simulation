@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<robot name="obj_model">
+
+  <!-- Link that contains the object -->
+  <link name="obj_link">
+    <!-- Visual Shape: 3D mesh from the .obj file -->
+    <visual>
+      <geometry>
+        <mesh filename="conserve.obj"/>  <!-- Path to the .obj file -->
+      </geometry>
+      <material name="default_material">
+        <color rgba="0.6 0.6 0.6 1"/>  <!-- You can set the default color if no texture is available -->
+      </material>
+    </visual>
+    
+    <!-- Collision Shape: Mesh for collision -->
+    <collision>
+      <geometry>
+        <mesh filename="conserve.obj"/>  <!-- Path to the .obj file -->
+      </geometry>
+    </collision>
+    
+    <!-- Inertial properties: Mass and Inertia -->
+    <inertial>
+      <mass value="1.0"/>  <!-- You can adjust the mass as per your object -->
+      <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/> <!-- Adjust inertia -->
+    </inertial>
+  </link>
+
+</robot>

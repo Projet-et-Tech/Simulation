@@ -1,0 +1,4 @@
+Invoking command in '/home/ws/tests/ws_robot/build/robot': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --build /home/ws/tests/ws_robot/build/robot -- -j8 -l8
+Invoked command in '/home/ws/tests/ws_robot/build/robot' returned '0': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --build /home/ws/tests/ws_robot/build/robot -- -j8 -l8
+Invoking command in '/home/ws/tests/ws_robot/build/robot': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --install /home/ws/tests/ws_robot/build/robot
+Invoked command in '/home/ws/tests/ws_robot/build/robot' returned '0': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --install /home/ws/tests/ws_robot/build/robot

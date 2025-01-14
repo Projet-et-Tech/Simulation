@@ -1,0 +1,55 @@
+[0.011s] Invoking command in '/home/ws/tests/dev_ws2/build/urdf_example': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake /home/ws/tests/dev_ws2/src/urdf_example -DCMAKE_INSTALL_PREFIX=/home/ws/tests/dev_ws2/install/urdf_example
+[0.171s] -- The C compiler identification is GNU 11.4.0
+[0.258s] -- The CXX compiler identification is GNU 11.4.0
+[0.267s] -- Detecting C compiler ABI info
+[0.330s] -- Detecting C compiler ABI info - done
+[0.335s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.335s] -- Detecting C compile features
+[0.336s] -- Detecting C compile features - done
+[0.338s] -- Detecting CXX compiler ABI info
+[0.394s] -- Detecting CXX compiler ABI info - done
+[0.399s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.399s] -- Detecting CXX compile features
+[0.400s] -- Detecting CXX compile features - done
+[0.403s] -- Found ament_cmake: 2.0.6 (/opt/ros/iron/share/ament_cmake/cmake)
+[0.518s] -- Found Python3: /usr/bin/python3.10 (found version "3.10.12") found components: Interpreter 
+[0.601s] -- Found ament_lint_auto: 0.14.4 (/opt/ros/iron/share/ament_lint_auto/cmake)
+[0.669s] -- Added test 'copyright' to check source files copyright and LICENSE
+[0.673s] -- Added test 'flake8' to check Python code syntax and style conventions
+[0.673s] -- Configured 'flake8' exclude dirs and/or files: 
+[0.674s] -- Added test 'lint_cmake' to check CMake code style
+[0.675s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[0.677s] -- Added test 'xmllint' to check XML markup files
+[0.678s] -- Configuring done
+[0.680s] -- Generating done
+[0.680s] -- Build files have been written to: /home/ws/tests/dev_ws2/build/urdf_example
+[0.684s] Invoked command in '/home/ws/tests/dev_ws2/build/urdf_example' returned '0': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake /home/ws/tests/dev_ws2/src/urdf_example -DCMAKE_INSTALL_PREFIX=/home/ws/tests/dev_ws2/install/urdf_example
+[0.685s] Invoking command in '/home/ws/tests/dev_ws2/build/urdf_example': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --build /home/ws/tests/dev_ws2/build/urdf_example -- -j8 -l8
+[0.712s] Invoked command in '/home/ws/tests/dev_ws2/build/urdf_example' returned '0': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --build /home/ws/tests/dev_ws2/build/urdf_example -- -j8 -l8
+[0.734s] Invoking command in '/home/ws/tests/dev_ws2/build/urdf_example': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --install /home/ws/tests/dev_ws2/build/urdf_example
+[0.739s] -- Install configuration: ""
+[0.739s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/urdf_example/description
+[0.740s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/urdf_example/description/example_robot.urdf.xacro
+[0.740s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/urdf_example/description/example_include.xacro
+[0.740s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/urdf_example/description/example_gazebo.xacro
+[0.740s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/urdf_example/launch
+[0.740s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/urdf_example/launch/rsp.launch.py
+[0.740s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/urdf_example/launch/rsp_sim.launch.py
+[0.741s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/urdf_example/worlds
+[0.741s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/urdf_example/worlds/test_world.world
+[0.741s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/ament_index/resource_index/package_run_dependencies/urdf_example
+[0.742s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/ament_index/resource_index/parent_prefix_path/urdf_example
+[0.742s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/urdf_example/environment/ament_prefix_path.sh
+[0.742s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/urdf_example/environment/ament_prefix_path.dsv
+[0.742s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/urdf_example/environment/path.sh
+[0.742s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/urdf_example/environment/path.dsv
+[0.742s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/urdf_example/local_setup.bash
+[0.742s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/urdf_example/local_setup.sh
+[0.742s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/urdf_example/local_setup.zsh
+[0.742s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/urdf_example/local_setup.dsv
+[0.742s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/urdf_example/package.dsv
+[0.743s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/ament_index/resource_index/packages/urdf_example
+[0.743s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/urdf_example/cmake/urdf_exampleConfig.cmake
+[0.743s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/urdf_example/cmake/urdf_exampleConfig-version.cmake
+[0.743s] -- Installing: /home/ws/tests/dev_ws2/install/urdf_example/share/urdf_example/package.xml
+[0.745s] Invoked command in '/home/ws/tests/dev_ws2/build/urdf_example' returned '0': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --install /home/ws/tests/dev_ws2/build/urdf_example

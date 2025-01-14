@@ -1,0 +1,45 @@
+[0.007s] Invoking command in '/home/ws/tests/ws/build/table': /usr/bin/cmake /home/ws/tests/ws/src/table -DCMAKE_INSTALL_PREFIX=/home/ws/tests/ws/install/table
+[0.140s] -- The C compiler identification is GNU 11.4.0
+[0.230s] -- The CXX compiler identification is GNU 11.4.0
+[0.239s] -- Detecting C compiler ABI info
+[0.304s] -- Detecting C compiler ABI info - done
+[0.311s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.311s] -- Detecting C compile features
+[0.312s] -- Detecting C compile features - done
+[0.316s] -- Detecting CXX compiler ABI info
+[0.378s] -- Detecting CXX compiler ABI info - done
+[0.383s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.384s] -- Detecting CXX compile features
+[0.384s] -- Detecting CXX compile features - done
+[0.388s] -- Found ament_cmake: 2.0.6 (/opt/ros/iron/share/ament_cmake/cmake)
+[0.505s] -- Found Python3: /usr/bin/python3.10 (found version "3.10.12") found components: Interpreter 
+[0.586s] -- Found ament_lint_auto: 0.14.4 (/opt/ros/iron/share/ament_lint_auto/cmake)
+[0.623s] Error parsing '/home/ws/tests/ws/src/table/package.xml':
+[0.623s] Traceback (most recent call last):
+[0.623s]   File "/opt/ros/iron/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py", line 150, in <module>
+[0.623s]     main()
+[0.623s]   File "/opt/ros/iron/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py", line 53, in main
+[0.623s]     raise e
+[0.623s]   File "/opt/ros/iron/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py", line 49, in main
+[0.623s]     package = parse_package_string(
+[0.624s]   File "/usr/lib/python3/dist-packages/catkin_pkg/package.py", line 788, in parse_package_string
+[0.624s]     pkg.validate(warnings=warnings)
+[0.624s]   File "/usr/lib/python3/dist-packages/catkin_pkg/package.py", line 330, in validate
+[0.624s]     raise InvalidPackage('\n'.join(errors), self.filename)
+[0.624s] catkin_pkg.package.InvalidPackage: Error(s) in package '/home/ws/tests/ws/src/table/package.xml':
+[0.624s] Invalid email "--global" for person "vscode"
+[0.630s] [31mCMake Error at /opt/ros/iron/share/ament_cmake_core/cmake/core/ament_package_xml.cmake:95 (message):
+[0.630s]   execute_process(/usr/bin/python3.10
+[0.630s]   /opt/ros/iron/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py
+[0.630s]   /home/ws/tests/ws/src/table/package.xml
+[0.630s]   /home/ws/tests/ws/build/table/ament_cmake_core/package.cmake) returned
+[0.630s]   error code 1
+[0.630s] Call Stack (most recent call first):
+[0.630s]   /opt/ros/iron/share/ament_cmake_core/cmake/core/ament_package_xml.cmake:49 (_ament_package_xml)
+[0.630s]   /opt/ros/iron/share/ament_lint_auto/cmake/ament_lint_auto_find_test_dependencies.cmake:31 (ament_package_xml)
+[0.630s]   CMakeLists.txt:23 (ament_lint_auto_find_test_dependencies)
+[0.630s] 
+[0.630s] [0m
+[0.631s] -- Configuring incomplete, errors occurred!
+[0.631s] See also "/home/ws/tests/ws/build/table/CMakeFiles/CMakeOutput.log".
+[0.633s] Invoked command in '/home/ws/tests/ws/build/table' returned '1': /usr/bin/cmake /home/ws/tests/ws/src/table -DCMAKE_INSTALL_PREFIX=/home/ws/tests/ws/install/table

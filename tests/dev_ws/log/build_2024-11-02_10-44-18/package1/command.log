@@ -1,0 +1,6 @@
+Invoking command in '/home/ws/dev_ws/build/package1': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake /home/ws/dev_ws/src/package1 -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ws/dev_ws/install/package1
+Invoked command in '/home/ws/dev_ws/build/package1' returned '0': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake /home/ws/dev_ws/src/package1 -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ws/dev_ws/install/package1
+Invoking command in '/home/ws/dev_ws/build/package1': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --build /home/ws/dev_ws/build/package1 -- -j8 -l8
+Invoked command in '/home/ws/dev_ws/build/package1' returned '0': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --build /home/ws/dev_ws/build/package1 -- -j8 -l8
+Invoking command in '/home/ws/dev_ws/build/package1': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --install /home/ws/dev_ws/build/package1
+Invoked command in '/home/ws/dev_ws/build/package1' returned '0': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --install /home/ws/dev_ws/build/package1

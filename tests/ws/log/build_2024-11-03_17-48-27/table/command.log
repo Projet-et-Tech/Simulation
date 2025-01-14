@@ -1,0 +1,6 @@
+Invoking command in '/home/ws/tests/ws/build/table': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake /home/ws/tests/ws/src/table -DCMAKE_INSTALL_PREFIX=/home/ws/tests/ws/install/table
+Invoked command in '/home/ws/tests/ws/build/table' returned '0': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake /home/ws/tests/ws/src/table -DCMAKE_INSTALL_PREFIX=/home/ws/tests/ws/install/table
+Invoking command in '/home/ws/tests/ws/build/table': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --build /home/ws/tests/ws/build/table -- -j8 -l8
+Invoked command in '/home/ws/tests/ws/build/table' returned '0': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --build /home/ws/tests/ws/build/table -- -j8 -l8
+Invoking command in '/home/ws/tests/ws/build/table': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --install /home/ws/tests/ws/build/table
+Invoked command in '/home/ws/tests/ws/build/table' returned '0': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --install /home/ws/tests/ws/build/table

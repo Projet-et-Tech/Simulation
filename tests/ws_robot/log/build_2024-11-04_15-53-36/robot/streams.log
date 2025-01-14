@@ -1,0 +1,45 @@
+[0.010s] Invoking command in '/home/ws/tests/ws_robot/build/robot': /usr/bin/cmake /home/ws/tests/ws_robot/src/robot -DCMAKE_INSTALL_PREFIX=/home/ws/tests/ws_robot/install/robot
+[0.140s] -- The C compiler identification is GNU 11.4.0
+[0.219s] -- The CXX compiler identification is GNU 11.4.0
+[0.229s] -- Detecting C compiler ABI info
+[0.307s] -- Detecting C compiler ABI info - done
+[0.313s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.313s] -- Detecting C compile features
+[0.314s] -- Detecting C compile features - done
+[0.317s] -- Detecting CXX compiler ABI info
+[0.381s] -- Detecting CXX compiler ABI info - done
+[0.388s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.388s] -- Detecting CXX compile features
+[0.388s] -- Detecting CXX compile features - done
+[0.396s] -- Found ament_cmake: 2.0.6 (/opt/ros/iron/share/ament_cmake/cmake)
+[0.511s] -- Found Python3: /usr/bin/python3.10 (found version "3.10.12") found components: Interpreter 
+[0.595s] -- Found ament_lint_auto: 0.14.4 (/opt/ros/iron/share/ament_lint_auto/cmake)
+[0.635s] Error parsing '/home/ws/tests/ws_robot/src/robot/package.xml':
+[0.636s] Traceback (most recent call last):
+[0.636s]   File "/opt/ros/iron/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py", line 150, in <module>
+[0.636s]     main()
+[0.636s]   File "/opt/ros/iron/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py", line 53, in main
+[0.636s]     raise e
+[0.636s]   File "/opt/ros/iron/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py", line 49, in main
+[0.636s]     package = parse_package_string(
+[0.636s]   File "/usr/lib/python3/dist-packages/catkin_pkg/package.py", line 788, in parse_package_string
+[0.636s]     pkg.validate(warnings=warnings)
+[0.636s]   File "/usr/lib/python3/dist-packages/catkin_pkg/package.py", line 330, in validate
+[0.636s]     raise InvalidPackage('\n'.join(errors), self.filename)
+[0.636s] catkin_pkg.package.InvalidPackage: Error(s) in package '/home/ws/tests/ws_robot/src/robot/package.xml':
+[0.636s] Invalid email "--global" for person "vscode"
+[0.642s] [31mCMake Error at /opt/ros/iron/share/ament_cmake_core/cmake/core/ament_package_xml.cmake:95 (message):
+[0.642s]   execute_process(/usr/bin/python3.10
+[0.642s]   /opt/ros/iron/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py
+[0.642s]   /home/ws/tests/ws_robot/src/robot/package.xml
+[0.642s]   /home/ws/tests/ws_robot/build/robot/ament_cmake_core/package.cmake)
+[0.642s]   returned error code 1
+[0.642s] Call Stack (most recent call first):
+[0.642s]   /opt/ros/iron/share/ament_cmake_core/cmake/core/ament_package_xml.cmake:49 (_ament_package_xml)
+[0.642s]   /opt/ros/iron/share/ament_lint_auto/cmake/ament_lint_auto_find_test_dependencies.cmake:31 (ament_package_xml)
+[0.642s]   CMakeLists.txt:23 (ament_lint_auto_find_test_dependencies)
+[0.642s] 
+[0.642s] [0m
+[0.642s] -- Configuring incomplete, errors occurred!
+[0.642s] See also "/home/ws/tests/ws_robot/build/robot/CMakeFiles/CMakeOutput.log".
+[0.645s] Invoked command in '/home/ws/tests/ws_robot/build/robot' returned '1': /usr/bin/cmake /home/ws/tests/ws_robot/src/robot -DCMAKE_INSTALL_PREFIX=/home/ws/tests/ws_robot/install/robot

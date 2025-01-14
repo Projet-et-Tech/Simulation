@@ -1,0 +1,20 @@
+<robot name="robot_rectangle">
+    <!-- Robot rectangulaire 0.32 m x 0.32 m x 0.1 m -->
+    <link name="base">
+        <visual>
+            <origin xyz="0 0 0.35" rpy="0 0 0"/>  <!-- Hauteur de 0.1 m (20 cm de hauteur totale) -->
+            <geometry>
+                <box size="0.32 0.32 0.35"/>  <!-- Dimensions 0.32 m x 0.32 m x 0.1 m -->
+            </geometry>
+            <material name="blue">
+                <color rgba="0 1 1 1"/>  <!-- Couleur cyan pour le robot -->
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0.35" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.32 0.32 0.35"/>
+            </geometry>
+        </collision>
+    </link>
+</robot>
