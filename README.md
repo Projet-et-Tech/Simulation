@@ -1,47 +1,45 @@
-# ROS Docker Development Environment
+# Simulation
 
-This repository provides a Docker-based development setup for working with ROS (Robot Operating System) using GUI support. Follow the steps below to install, build, and enable GUI for your ROS development environment.
+Ce répertoire centralise la partie simulation du robot. L'objectif est de modéliser l'environnement dans lequel le robot évoluera (table, éléments de jeu, robot adverse) afin d'adapter les déplacements de nos différents robots et ainsi maximiser le nombre de points collectés. Nous utilisons Python et le répertoire Pybullet pour effectuer cette simulation.
 
-## Prerequisites
+## L'application
 
-- Ensure you have Docker installed on your system. For installation instructions, see the [Docker documentation](https://docs.docker.com/get-docker/).
-- If you'll be working with a GUI, you **MUST** have **Linux installed**. (instructions under __Enable GUI (Linux)__)
+### Get started
 
-## Setup Instructions
+1. Cloner le repository
 
-### 1. Install Docker
-If Docker is not installed, follow the instructions to install Docker for your operating system from the [Docker website](https://docs.docker.com/get-docker/).
 
-### 2. Build Docker Image
-
-Build the Docker image using the provided Dockerfile:
 ```bash
-docker build -t ros-docker .
+git clone git@github.com:Projet-et-Tech/Simulation.git
 ```
 
-This command creates a Docker image named `ros-docker` using the configurations in the Dockerfile
 
-### 3. Enable GUI 
+## Principe
 
-To use GUI applications within the Docker container on Linux, run the following command on the host:
-```bash
-xhost +SI:localuser:$(whoami)
-```
-This command configures the X11 display server to allow the container to access the host machine's display for GUI functionality.
+### Principe général
 
-### 4. Open the Project in Container
+Comme dit précédemment, l'objectif est de maximiser le nombre de points collectés. Le point de vue que nous avons sur un match est donc global. Ainsi, il n'est pas nécessaire de modéliser le robot de façon détaillée ou ses actionneurs de manière précise. Pour simuler les actions du robot, nous mettrons en place un timer qui représente le temps pris par le robot pour effectuer l'action de jeu. Le robot s'immobilisera lorsqu'il effectue cette action de manière à correspondre à ce que serait la réalité. De même, le robot sera modélisé par un cube dont les côtés correspondent à son envergure réelle.
 
-Make sure you have the `Dev Container` extension installed
+Aussi, la manière dont le robot intéragit avec les objets de la table est la suivante : lorsque le robot prend un objet, celui-ci disparaît de la simulation et entre dans "l'inventaire" du robot. Lorsque le robot pose un objet à un endroit, celui-ci réapparaît à l'endroit posé.
 
-Open the project in a Docker container using your IDE’s command palette. In Visual Studio Code:
+### Imagerie
 
-1. Open the Command Palette (`Ctrl + Shift + P` or `Cmd + Shift + P`).
-2. Select `Remote-Containers: Reopen in Container.`
+Pour repérer le robot, nous utiliserons 2 caméras, placées à 1m de hauteur (conformément aux règles de la coupe). Les exigences caméras sont les suivantes :
+    - une qualité d'image de 1080 x 720p (vidéo)
+    - une ouverture horizontale de 43, 50 en verticale
 
-## Troubleshooting 
+Ces caméras nous permettront, grâce aux 4 codes Aruco placés sur la table et de celui placé sur le robot, de récupérer les coordonnées du robot dans le réferentiel de la table en temps réel (et donc de pouvoir déterminer précisemment sa position). 
 
-If you encounter issues:
+Un des autres objectifs est de récupérer les coordonnées en temps réel des éléments de jeu et du robot adverse. Cela reste à être implémenté.
 
-- Ensure Docker is correctly installed and running.
-- Verify that your X11 display server is correctly configured (for GUI on Linux).
-- Rebuild the Docker image if there are changes to the Dockerfile.
+Cette imagerie est réalisée grâce à la bibliothèque OpenCV sur python.
+
+## To do :
+
+- [x] Problèmes de coordonnées (coordination des coordonnées simulation / grille)
+- [x] Problème des cellules : changement de taille -> n'importe quoi
+- [x] Définir la taille des obstacles
+- [x] Caméra : détecter les éléments de jeu et retourner leurs coordonnées
+
+
+

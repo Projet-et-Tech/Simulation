@@ -1,20 +1,29 @@
+<?xml version="1.0" ?>
 <robot name="robot_rectangle">
     <!-- Robot rectangulaire 0.32 m x 0.32 m x 0.1 m -->
     <link name="base">
         <visual>
-            <origin xyz="0 0 0.35" rpy="0 0 0"/>  <!-- Hauteur de 0.1 m (20 cm de hauteur totale) -->
+            <origin xyz="0 0 0.175" rpy="0 0 0"/>
             <geometry>
-                <box size="0.32 0.32 0.35"/>  <!-- Dimensions 0.32 m x 0.32 m x 0.1 m -->
+                <box size="0.32 0.32 0.35"/>  <!-- Dimensions 0.32 m x 0.32 m x 0.35m -->
             </geometry>
             <material name="blue">
                 <color rgba="0 1 1 1"/>  <!-- Couleur cyan pour le robot -->
             </material>
         </visual>
+		
         <collision>
-            <origin xyz="0 0 0.35" rpy="0 0 0"/>
+            <origin xyz="0 0 0.175" rpy="0 0 0"/>
             <geometry>
                 <box size="0.32 0.32 0.35"/>
             </geometry>
         </collision>
+		
+		<!-- Inertial properties: Mass and Inertia -->
+		<inertial>
+            <mass value="4.0"/>  <!-- Masse à 4 kg -->
+            <inertia ixx="0.32" ixy="0" ixz="0" iyy="0.32" iyz="0" izz="0.1"/> <!-- Inertie ajustée -->
+        </inertial>
+		
     </link>
 </robot>
