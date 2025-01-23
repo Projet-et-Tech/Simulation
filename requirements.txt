@@ -1,4 +1,3 @@
 pybullet
 matplotlib
 numpy
-python-tk
