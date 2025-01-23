@@ -8,11 +8,33 @@ Ce répertoire centralise la partie simulation du robot. L'objectif est de modé
 
 1. Cloner le repository
 
-
 ```bash
 git clone git@github.com:Projet-et-Tech/Simulation.git
 ```
 
+2. Créer un environnement virtuel avec les dépendances installées :
+
+```bash
+make environment
+```
+
+3. Activer l'environnement virtuel :
+
+```bash
+source .venv/bin/activate
+```
+
+4. Installer les dépendances :
+
+```bash
+make install
+```
+
+5. Exécuter le programme :
+
+```bash
+make run
+```
 
 ## Principe
 
