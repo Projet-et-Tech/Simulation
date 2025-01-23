@@ -1,10 +1,12 @@
 import numpy as np
+import config
 
 class Grid:
-    def __init__(self, table_length, table_width, cell_size):
-        self.table_length = table_length
-        self.table_width = table_width
-        self.cell_size = cell_size
+    def __init__(self):
+        self.table_length = config.TABLE_LENGTH
+        self.table_width = config.TABLE_WIDTH
+        self.cell_size = config.CELL_SIZE
+        self.table_height = config.TABLE_HEIGHT
 
         # Dimensions de la grille
         self.grid_rows = int(self.table_width / self.cell_size)
