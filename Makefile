@@ -10,6 +10,7 @@ environment:
 		source .venv/bin/activate; \
 		echo "> Installing requirements"; \
 		pip install -r requirements.dev.txt; \
+		sudo apt-get install python3-tk -y: \
 	)
 
 clean: ## Remove virtual env
