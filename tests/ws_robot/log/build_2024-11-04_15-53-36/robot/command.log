@@ -1,2 +1,0 @@
-Invoking command in '/home/ws/tests/ws_robot/build/robot': /usr/bin/cmake /home/ws/tests/ws_robot/src/robot -DCMAKE_INSTALL_PREFIX=/home/ws/tests/ws_robot/install/robot
-Invoked command in '/home/ws/tests/ws_robot/build/robot' returned '1': /usr/bin/cmake /home/ws/tests/ws_robot/src/robot -DCMAKE_INSTALL_PREFIX=/home/ws/tests/ws_robot/install/robot

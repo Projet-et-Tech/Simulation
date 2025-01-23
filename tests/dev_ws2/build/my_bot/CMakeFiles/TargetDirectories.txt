@@ -1,9 +1,0 @@
-/home/ws/tests/dev_ws2/build/my_bot/CMakeFiles/uninstall.dir
-/home/ws/tests/dev_ws2/build/my_bot/CMakeFiles/my_bot_uninstall.dir
-/home/ws/tests/dev_ws2/build/my_bot/CMakeFiles/test.dir
-/home/ws/tests/dev_ws2/build/my_bot/CMakeFiles/edit_cache.dir
-/home/ws/tests/dev_ws2/build/my_bot/CMakeFiles/rebuild_cache.dir
-/home/ws/tests/dev_ws2/build/my_bot/CMakeFiles/list_install_components.dir
-/home/ws/tests/dev_ws2/build/my_bot/CMakeFiles/install.dir
-/home/ws/tests/dev_ws2/build/my_bot/CMakeFiles/install/local.dir
-/home/ws/tests/dev_ws2/build/my_bot/CMakeFiles/install/strip.dir

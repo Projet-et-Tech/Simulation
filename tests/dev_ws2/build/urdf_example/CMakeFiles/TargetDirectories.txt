@@ -1,9 +1,0 @@
-/home/ws/tests/dev_ws2/build/urdf_example/CMakeFiles/uninstall.dir
-/home/ws/tests/dev_ws2/build/urdf_example/CMakeFiles/urdf_example_uninstall.dir
-/home/ws/tests/dev_ws2/build/urdf_example/CMakeFiles/test.dir
-/home/ws/tests/dev_ws2/build/urdf_example/CMakeFiles/edit_cache.dir
-/home/ws/tests/dev_ws2/build/urdf_example/CMakeFiles/rebuild_cache.dir
-/home/ws/tests/dev_ws2/build/urdf_example/CMakeFiles/list_install_components.dir
-/home/ws/tests/dev_ws2/build/urdf_example/CMakeFiles/install.dir
-/home/ws/tests/dev_ws2/build/urdf_example/CMakeFiles/install/local.dir
-/home/ws/tests/dev_ws2/build/urdf_example/CMakeFiles/install/strip.dir

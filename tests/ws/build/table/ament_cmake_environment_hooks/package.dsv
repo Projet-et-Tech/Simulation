@@ -1,4 +1,0 @@
-source;share/table/local_setup.bash
-source;share/table/local_setup.dsv
-source;share/table/local_setup.sh
-source;share/table/local_setup.zsh

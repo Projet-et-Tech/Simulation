@@ -1,4 +1,0 @@
-Invoking command in '/home/ws/tests/dev_ws2/build/my_bot': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --build /home/ws/tests/dev_ws2/build/my_bot -- -j8 -l8
-Invoked command in '/home/ws/tests/dev_ws2/build/my_bot' returned '0': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --build /home/ws/tests/dev_ws2/build/my_bot -- -j8 -l8
-Invoking command in '/home/ws/tests/dev_ws2/build/my_bot': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --install /home/ws/tests/dev_ws2/build/my_bot
-Invoked command in '/home/ws/tests/dev_ws2/build/my_bot' returned '0': CMAKE_PREFIX_PATH=/opt/ros/iron /usr/bin/cmake --install /home/ws/tests/dev_ws2/build/my_bot
