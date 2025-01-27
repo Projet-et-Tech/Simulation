@@ -8,7 +8,7 @@ from simulation.grid import Grid
 from simulation.pybullet_manager import PyBulletManager
 from utils.math_helpers import interpolate_position
 from utils.visualization import Visualization
-import config
+import config as config
 
 def main():
     # Initialisation de PyBullet
@@ -21,7 +21,7 @@ def main():
 
     # Création de la table
     table_position = [0, 0, config.TABLE_HEIGHT / 2]
-    table_id = pybullet_manager.load_urdf("urdf_models/table_eurobot2025.urdf", table_position, [0, 0, 0, 1])
+    table_id = pybullet_manager.load_urdf("src/urdf_models/table_eurobot2025.urdf", table_position, [0, 0, 0, 1])
 
     # Création des conserves
     can_positions = [
@@ -37,7 +37,7 @@ def main():
         [0.875, -0.75, 0.1], [0.775, -0.75, 0.1], [0.675, -0.75, 0.1], [0.575, -0.75, 0.1],
         [0.55, -0.05, 0.1], [0.45, -0.05, 0.1], [0.35, -0.05, 0.1], [0.25, -0.05, 0.1]
     ]
-    can_ids = [SimulationObject("urdf_models/conserve.urdf", pos, [0.7071, 0, 0, 0.7071]).object_id for pos in can_positions]
+    can_ids = [SimulationObject("src/urdf_models/conserve.urdf", pos, [0.7071, 0, 0, 0.7071]).object_id for pos in can_positions]
 
     # Création des planches
     plank_positions_horizontal = [
@@ -45,16 +45,16 @@ def main():
         [-0.4, -0.05, 0.15], [-0.4, -0.05, 0.2], [0.675, 0.725, 0.15], [0.675, 0.725, 0.2],
         [0.725, -0.75, 0.15], [0.725, -0.75, 0.2], [0.4, -0.05, 0.15], [0.4, -0.05, 0.2]
     ]
-    plank_horizontal_ids = [SimulationObject("urdf_models/planche.urdf", pos, [0.7071, 0, 0, 0.7071]).object_id for pos in plank_positions_horizontal]
+    plank_horizontal_ids = [SimulationObject("src/urdf_models/planche.urdf", pos, [0.7071, 0, 0, 0.7071]).object_id for pos in plank_positions_horizontal]
 
     plank_positions_vertical = [
         [-1.425, 0.325, 0.15], [-1.425, 0.325, 0.2], [-1.425, -0.6, 0.15], [-1.425, -0.6, 0.2],
         [1.425, 0.325, 0.15], [1.425, 0.325, 0.2], [1.425, -0.6, 0.15], [1.425, -0.6, 0.2]
     ]
-    plank_vertical_ids = [SimulationObject("urdf_models/planche.urdf", pos, [0.5, 0.5, 0.5, 0.5]).object_id for pos in plank_positions_vertical]
+    plank_vertical_ids = [SimulationObject("src/urdf_models/planche.urdf", pos, [0.5, 0.5, 0.5, 0.5]).object_id for pos in plank_positions_vertical]
 
     # Initialisation du robot
-    robot = Robot("urdf_models/robot_cube.urdf", config.ROBOT_START_POS, [0, 0, 0, 1])
+    robot = Robot("src/urdf_models/robot_cube.urdf", config.ROBOT_START_POS, [0, 0, 0, 1])
 
     # Création de la grille et ajout des obstacles
     grid = Grid()

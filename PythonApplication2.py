@@ -96,7 +96,7 @@ rotationXZ90 = [0.5, 0.5, 0.5, 0.5] # Rotation de 90 sur x et z en quaternion
 # ---------------- Création de la table ----------------
 
 table_position = [0, 0, table_height / 2]  # La table est legerement au-dessus du sol
-table_id = p.loadURDF("urdf_models/table_eurobot2025.urdf", table_position, [0, 0, 0, 1], globalScaling = 1.0)
+table_id = p.loadURDF("src/urdf_models/table_eurobot2025.urdf", table_position, [0, 0, 0, 1], globalScaling = 1.0)
 
 # ---------------- Création des conserves ----------------
 
@@ -157,7 +157,7 @@ can_positions = [
                  ]
 can_ids = [0] * len(can_positions)
 for i in range(len(can_positions)):
-    can_id = p.loadURDF("urdf_models/conserve.urdf", can_positions[i], rotationX90, globalScaling = 1.0)
+    can_id = p.loadURDF("src/urdf_models/conserve.urdf", can_positions[i], rotationX90, globalScaling = 1.0)
     can_ids[i] = can_id
 
 # ---------------- Crération des planches ----------------
@@ -187,7 +187,7 @@ plank_positions_horizontal = [
                   ]
 plank_horizontal_ids = [0] * len(plank_positions_horizontal)
 for i in range(len(plank_positions_horizontal)):
-    plank_horizontal_id = p.loadURDF("urdf_models/planche.urdf", plank_positions_horizontal[i], rotationX90, globalScaling = 1.0)
+    plank_horizontal_id = p.loadURDF("src/urdf_models/planche.urdf", plank_positions_horizontal[i], rotationX90, globalScaling = 1.0)
     plank_horizontal_ids[i] = plank_horizontal_id
 
 plank_positions_vertical = [
@@ -209,14 +209,14 @@ plank_positions_vertical = [
                   ]
 plank_vertical_ids = [0] * len(plank_positions_vertical)
 for i in range(len(plank_positions_vertical)):
-    plank_vertical_id = p.loadURDF("urdf_models/planche.urdf", plank_positions_vertical[i], rotationXZ90, globalScaling = 1.0)
+    plank_vertical_id = p.loadURDF("src/urdf_models/planche.urdf", plank_positions_vertical[i], rotationXZ90, globalScaling = 1.0)
     plank_vertical_ids[i] = plank_vertical_id
 
 # ----------------  Paramètres du robot ----------------
 
 # Charger le robot rectangulaire personnalise
 robot_start_pos = [0, 0, table_height + 0.1]  # Position initiale du robot
-robot_id = p.loadURDF("urdf_models/robot_cube.urdf", robot_start_pos, [0, 0, 0, 1], globalScaling=1.0)
+robot_id = p.loadURDF("src/urdf_models/robot_cube.urdf", robot_start_pos, [0, 0, 0, 1], globalScaling=1.0)
 
 # Variables pour les deplacements
 robot_speed = 0.5  # Vitesse de deplacement (m/s)
