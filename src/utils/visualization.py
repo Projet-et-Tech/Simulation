@@ -1,9 +1,32 @@
 import numpy as np
 from matplotlib.colors import ListedColormap
-
 import matplotlib.pyplot as plt
 
 class Visualization:
+    """
+    Classe Visualization pour afficher une grille avec des obstacles, un point de départ et un point d'arrivée.
+    Cette classe utilise matplotlib pour visualiser une grille où chaque cellule peut représenter un obstacle, 
+    le point de départ, le point d'arrivée, un robot, ou une zone interdite. Les couleurs des cellules sont 
+    définies par un dictionnaire de couleurs et une colormap personnalisée.
+    Attributs:
+    ----------
+    grid : list of list of int
+        La grille à afficher, où chaque entier représente un type de cellule.
+    cell_size : int
+        La taille de chaque cellule dans la grille.
+    start : tuple of int
+        Les coordonnées (ligne, colonne) du point de départ.
+    goal : tuple of int
+        Les coordonnées (ligne, colonne) du point d'arrivée.
+    Méthodes:
+    ---------
+    __init__(self, grid, cell_size, start, goal):
+        Initialise la grille, les couleurs, et configure l'affichage interactif.
+    update_grid(self, grid):
+        Met à jour la grille et redessine l'image.
+    finalize(self):
+        Désactive le mode interactif et affiche la figure finale.
+    """
     def __init__(self, grid, cell_size, start, goal):
         self.grid = grid
         self.cell_size = cell_size
@@ -20,7 +43,7 @@ class Visualization:
             5: 'red' # no go zone
         }
 
-        # Create a custom colormap based on these colors
+        # Créer une colormap personnalisée basée sur ces couleurs
         self.custom_cmap = ListedColormap([self.group_colors[key] for key in sorted(self.group_colors.keys())])
 
         # Configurer l'affichage en mode interactif
@@ -58,11 +81,13 @@ class Visualization:
         plt.pause(0.1)
 
     def update_grid(self, grid):
+        # Mettre à jour la grille et redessiner l'image
         self.grid = grid
         self.im.set_data(grid)
         plt.draw()
         plt.pause(0.001)
 
     def finalize(self):
+        # Désactiver le mode interactif et afficher la figure finale
         plt.ioff()
         plt.show()

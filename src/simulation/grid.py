@@ -1,5 +1,5 @@
 import numpy as np
-import config
+import config as config
 
 class Grid:
     def __init__(self):
