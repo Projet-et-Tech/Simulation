@@ -29,13 +29,27 @@ def create_environment(pybullet_manager):
     return plane_id, table_id 
 
 
+def edge(xmin, xmax, ymin, ymax):
+    # Create the coordinates for the edges
+    ox = list(range(xmin, xmax + 1)) + [xmax] * (ymax - ymin + 1) + list(range(xmax, xmin - 1, -1)) + [xmin] * (ymax - ymin + 1)
+    oy = [ymin] * (xmax - xmin + 1) + list(range(ymin, ymax + 1)) + [ymax] * (xmax - xmin + 1) + list(range(ymax, ymin - 1, -1))
+    return ox, oy
+
+def map_borders(x_dim, y_dim):
+    border_width = int(config.ROBOT_RADIUS / config.CELL_SIZE)
+    ox, oy = [], []
+    for w in range(border_width):
+        ox_w, oy_w = edge(w, x_dim-w, w, y_dim-w)
+        ox += ox_w
+        oy += oy_w
+    return ox, oy
+
 def initialize_map(grid):
     x_dim = grid.grid_cols
     y_dim = grid.grid_rows
     cell_size = grid.cell_size
     # Border obstacle positions
-    ox = 2*list(range(x_dim+1)) + [0 for _ in range(y_dim+1)] + [x_dim for _ in range(y_dim+1)]
-    oy = [0 for _ in range(x_dim+1)] + [y_dim for _ in range(x_dim+1)] + 2*list(range(y_dim+1))
+    ox, oy = map_borders(x_dim, y_dim)
 
     scene_corner1 = [-0.45, 1.0]  # Bottom-left corner of the scene
     scene_corner2 = [0.45, 0.55]  # Top-right corner of the scene

@@ -4,9 +4,10 @@ import numpy as np
 from simulation.grid import Grid
 from simulation.robot import Robot
 from simulation.pathfinding import AStar, DStarLite
+from simulation.pathfollowing import extract_waypoints
 from simulation.pybullet_manager import PyBulletManager
 from simulation.setup import load_objects, create_environment, initialize_map, initialize_cans
-from utils.math_helpers import interpolate_position, extract_waypoints
+from utils.math_helpers import interpolate_position
 from utils.visualization import Visualization
 import config as config
 
