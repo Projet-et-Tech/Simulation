@@ -18,14 +18,13 @@ clean: ## Remove virtual env
 	rm -r .venv
 
 runCamera: ## Run default mode
-	python3 P\&T.py
+	python3 src/mainCamera.py
 
 runSimu:
 	python3 PythonApplication2.py
 
 run:
-	python3 PythonApplication2.py;
-	python3 P&T.py;
+	python3 src/main.py;
 
 debug: ## Run local mode
 	python3 src/main.py --debug --env local

@@ -30,11 +30,24 @@ source .venv/bin/activate
 make install
 ```
 
-5. Exécuter le programme :
+5. Exécuter le programme main refactorisé (anciennement P&T.py) :
 
 ```bash
 make run
 ```
+
+6. Exécuter le programme simulation non refactorisé (anciennement PythonApplication2.py) :
+
+```bash
+make runSimu
+```
+
+7. Exécuter le programme camera non refactorisé (anciennement mainCamera.py) :
+
+```bash
+make runCamera
+```
+
 
 ## Principe
 
