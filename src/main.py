@@ -62,27 +62,24 @@ Fin initialisation pybullet
                                                             goal=goal,
                                                             spoofed_ox=spoofed_ox,
                                                             spoofed_oy=spoofed_oy)
-    print(path_exists)
     if path_exists:
-        wpx, wpy, extraction_time= extract_waypoints(pathx, pathy, threshold=4.5)
+        print("Path found", end=" ")
+        print(f"({int(compute_time*1e3)}ms)\n")
+        wpx, wpy, extraction_time= extract_waypoints(pathx, pathy, threshold=3)
         visualization.show_path(path_exists, pathx, pathy, wpx, wpy)
     else:
+        print("No path found", end=" ")
+        print(f"({int(compute_time*1e3)}ms)")
         visualization.show_path(path_exists, pathx, pathy, [], [])
 
     # Gestion du chemin et déplacement du robot
-    if not path_exists:
-        print("No path found", end=" ")
-        print(f"({int(compute_time*1e3)}ms)")
-    else:
-        print("Path found", end=" ")
-        print(f"({int(compute_time*1e3)}ms)\n")
-
+    if path_exists:
         print("Following the path :")
 
         for main_point_id in range(len(wpx)):
             target_position = (wpx[main_point_id], wpy[main_point_id])
             x_pos, y_pos, z_pos = grid.grid_index_to_position(target_position)
-            next_pos = [x_pos, y_pos]
+            next_pos = (x_pos, y_pos)
 
             while True:
                 robot_pos, _ = robot.get_position_and_orientation()

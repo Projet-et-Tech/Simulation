@@ -88,4 +88,5 @@ class Visualization:
                     bbox_to_anchor=(1, 1.07),
                     fontsize="xx-small",
                     ncol=5)
-        plt.show(block=True)
+        #plt.show(block=False)
+        plt.pause(2)

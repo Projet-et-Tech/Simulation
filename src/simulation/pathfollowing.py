@@ -45,7 +45,6 @@ def extract_major_positions(path_x, path_y):
 
 def get_distances(list_x, list_y):
     len_y = len(list_y)
-    print(len_y)
     assert len(list_x) == len_y
     return [np.hypot(list_x[i]-list_x[i+1], list_y[i]-list_y[i+1]) for i in range(len_y-1)]
 
@@ -88,9 +87,7 @@ def extract_waypoints(px, py, threshold):
     print("Extracting waypoints...")
     time_start = time.time()
     major_positions = extract_major_positions(px, py)
-    print(major_positions)
     clusters = cluster_major_positions(major_positions, px, py, threshold)
-    print(clusters)
 
     # mp sont des indices !!!
     mp_in_cluster = [mp for c in clusters for mp in c]
