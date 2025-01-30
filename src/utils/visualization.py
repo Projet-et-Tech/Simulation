@@ -13,6 +13,15 @@ class Visualization:
         self.ox, self.oy, self.spoofed_ox, self.spoofed_oy = obstacles
         self.cell_size = cell_size
 
+        # Legend
+        self.label_column = ['Start', 'Goal', 'Computed path', 'Important coods', 'Obstacles']
+        self.columns = [plt.plot([], [], symbol, color=colour, alpha=alpha)[0]
+                for symbol, colour, alpha in [['o', 'g', 1],
+                                                ['x', 'b', 1],
+                                                ['.', 'c', 1],
+                                                ['d', 'r', 1],
+                                                ['.', 'k', 1]]]
+
     def get_start_goal(self):
         # Create a plot
         plt.figure()
@@ -23,14 +32,6 @@ class Visualization:
         plt.plot(self.ox, self.oy, ".k")
         plt.plot(self.spoofed_ox, self.spoofed_oy, ".k")
 
-        # Legend
-        label_column = ['Start', 'Goal', 'Computed path', 'Important coods', 'Obstacles']
-        columns = [plt.plot([], [], symbol, color=colour, alpha=alpha)[0]
-                for symbol, colour, alpha in [['o', 'g', 1],
-                                                ['x', 'b', 1],
-                                                ['.', 'c', 1],
-                                                ['d', 'r', 1],
-                                                ['.', 'k', 1]]]
         # Start
         print("Click to set the start position...")
         plt.title("Click to set the start position...")
@@ -55,3 +56,17 @@ class Visualization:
         plt.plot(gx, gy, "xb", label='Goal')
         print()
         return self.start, self.goal
+
+    def show_path(self, path_exists, pathx, pathy, cpx, cpy):
+        if  path_exists:
+            plt.title("Path found", color='green', loc='left')
+            plt.plot(pathx, pathy, ".c", alpha=1.0)
+            plt.plot(cpx, cpy, "dr", alpha=1.0)
+        if  not path_exists:
+            plt.title("No path found", color='red', loc='left')
+        plt.legend(self.columns, self.label_column,
+                    loc='upper right',
+                    bbox_to_anchor=(1, 1.07),
+                    fontsize="xx-small",
+                    ncol=5)
+        plt.show()

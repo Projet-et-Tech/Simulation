@@ -2,9 +2,9 @@ import pybullet as p
 import time
 import numpy as np
 from simulation.robot import Robot
-from simulation.pathfinding import Pathfinding
+from simulation.pathfinding import AStar, DStarLite
 from simulation.pybullet_manager import PyBulletManager
-from utils.math_helpers import interpolate_position
+from utils.math_helpers import interpolate_position, extract_path, grid_index_to_position
 from utils.visualization import Visualization
 import config as config
 from simulation.setup import load_objects, create_environment, initialize_map, initialize_cans
@@ -26,12 +26,10 @@ def main():
     plank_horizontal_ids = load_objects(pybullet_manager, "src/urdf_models/planche.urdf", [0.7071, 0, 0, 0.7071], config.PLANK_POSITIONS_HORIZONTAL)
     plank_vertical_ids = load_objects(pybullet_manager, "src/urdf_models/planche.urdf", [0.5, 0.5, 0.5, 0.5], config.PLANK_POSITIONS_VERTICAL)
 
-    # Initialisation du robot
-    robot = Robot("src/urdf_models/robot_cube.urdf", config.ROBOT_START_POS, [0, 0, 0, 1])
-
     # Fin initialisation pybullet
     # ===========================
 
+    # ===========================
     # Obstacles
     ox, oy = initialize_map(config.X_DIM, config.Y_DIM, config.CELL_SIZE)
     ox_cans, oy_cans = initialize_cans(config.X_DIM, config.Y_DIM, config.CELL_SIZE, config.CAN_RADIUS)
@@ -44,13 +42,32 @@ def main():
     # Points de départ et d’arrivée
     start, goal = visualization.get_start_goal()
 
+    # Initialisation du robot
+    real_start = grid_index_to_position(start, config.X_DIM, config.Y_DIM, config.CELL_SIZE)
+    robot = Robot("src/urdf_models/robot_cube.urdf", [real_start[0], real_start[1], config.TABLE_HEIGHT + 0.1], [0, 0, 0, 1])
+    pybullet_manager.step_simulation()
+
     # Algorithme A*
-    #pathfinder = Pathfinding(grid.grid)
-    #path = pathfinder.a_star(start, goal)
+    #a_star = AStar(grid.grid)
+    #path = a_star.main(start, goal)
+
+    dstarlite = DStarLite(ox, oy)
+    path_exists, pathx, pathy, compute_time = dstarlite.main(start=start,
+                                                            goal=goal,
+                                                            spoofed_ox=spoofed_ox,
+                                                            spoofed_oy=spoofed_oy)
+    if path_exists:
+        cpx, cpy, extraction_time= extract_path(pathx, pathy, threshold=4.5)
+
+    visualization.show_path(path_exists, pathx, pathy, cpx, cpy)
 
     # Gestion du chemin et déplacement du robot
-    if path:
-        print("Chemin trouvé :", path)
+    if not False:
+        print("No path found", end=" ")
+        print(f"({int(compute_time*1e3)}ms)")
+    else:
+        print("Path found", end=" ")
+
         interpolation_steps = 20
 
         for step in path:
@@ -86,10 +103,7 @@ def main():
             visualization.update_grid(grid.grid)
 
         robot.set_velocity([0, 0, 0])
-    else:
-        print("Aucun chemin trouvé.")
 
-    visualization.finalize()
     pybullet_manager.disconnect()
 
 if __name__ == "__main__":
