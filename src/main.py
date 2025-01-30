@@ -42,13 +42,13 @@ Fin initialisation pybullet
     obstacles = [ox, oy, spoofed_ox, spoofed_oy]
     
     # Visualisation
-    visualization = Visualization(obstacles, grid)
+    visualization = Visualization(obstacles)
 
     # Points de départ et d’arrivée
     start, goal = visualization.get_start_goal(grid)
 
     # Initialisation du robot
-    real_start = grid_index_to_position(start)
+    real_start = grid.grid_index_to_position(start)
     robot = Robot("src/urdf_models/robot_cube.urdf", [real_start[0], real_start[1], config.TABLE_HEIGHT + 0.1], [0, 0, 0, 1])
     pybullet_manager.step_simulation()
 

@@ -22,10 +22,6 @@ def interpolate_position(start, end, steps):
     return [(start[0] + (end[0] - start[0]) * t / steps,
              start[1] + (end[1] - start[1]) * t / steps) for t in range(steps + 1)]
 
-def in_bound(grid, pos):
-    x, y = pos
-    return 0 <= x < grid.grid_rows and 0 <= y < grid.grid_cols
-
 def determine_direction(x1, y1, x2, y2):
     """Determine the direction of movement between two points."""
     if y1 == y2:  # Horizontal

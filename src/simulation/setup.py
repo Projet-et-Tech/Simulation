@@ -30,8 +30,8 @@ def create_environment(pybullet_manager):
 
 
 def initialize_map(grid):
-    x_dim = grid.grid_rows
-    y_dim = grid.grid_cols
+    x_dim = grid.grid_cols
+    y_dim = grid.grid_rows
     cell_size = grid.cell_size
     # Border obstacle positions
     ox = 2*list(range(x_dim+1)) + [0 for _ in range(y_dim+1)] + [x_dim for _ in range(y_dim+1)]
@@ -40,8 +40,8 @@ def initialize_map(grid):
     scene_corner1 = [-0.45, 1.0]  # Bottom-left corner of the scene
     scene_corner2 = [0.45, 0.55]  # Top-right corner of the scene
 
-    x_corner_1, y_corner_1 = grid.position_to_grid_index(scene_corner1)
-    x_corner_2, y_corner_2 = grid.position_to_grid_index(scene_corner2)
+    y_corner_1, x_corner_1 = grid.position_to_grid_index(scene_corner1)
+    y_corner_2, x_corner_2 = grid.position_to_grid_index(scene_corner2)
 
     x_min, x_max = min(x_corner_1, x_corner_2), max(x_corner_1, x_corner_2)
     y_min, y_max = min(y_corner_1, y_corner_2), max(y_corner_1, y_corner_2)
@@ -51,16 +51,16 @@ def initialize_map(grid):
             ox.append(x)
             oy.append(y)
 
-    return oy, ox
+    return ox, oy
 
 def initialize_cans(grid, can_radius):
-    x_dim = grid.grid_rows
-    y_dim = grid.grid_cols
+    x_dim = grid.grid_cols
+    y_dim = grid.grid_rows
     cell_size = grid.cell_size
     ox_cans, oy_cans = [], []
 
     for pos in CAN_POSITIONS:
-        ox_can, oy_can = grid.mark_can_on_grid(pos, can_radius)
+        oy_can, ox_can = grid.mark_can_on_grid(pos, can_radius)
         ox_cans.extend(ox_can)
         oy_cans.extend(oy_can)
 

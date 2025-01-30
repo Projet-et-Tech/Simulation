@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from utils.math_helpers import in_bound
 
 class Visualization:
     """
@@ -8,10 +7,7 @@ class Visualization:
     Cette classe utilise matplotlib pour visualiser une grille où chaque cellule peut représenter un obstacle, 
     le point de départ, le point d'arrivée, un robot, ou une zone interdite. 
     """
-    def __init__(self, obstacles, grid):
-        self.x_dim = grid.grid_rows
-        self.y_dim = grid.grid_cols
-        self.cell_size = grid.cell_size
+    def __init__(self, obstacles):
         self.ox, self.oy, self.spoofed_ox, self.spoofed_oy = obstacles
 
     def get_start_goal(self, grid):
@@ -36,7 +32,7 @@ class Visualization:
         print("Click to set the start position...")
         plt.title("Click to set the start position...")
         self.start = (0, 0)
-        while not in_bound(grid, self.start) or self.start in zip(self.ox, self.oy):
+        while not grid.in_bound(self.start) or self.start in zip(self.ox, self.oy):
             click_input = plt.ginput(1)[0]  # Get one click
             self.start = (int(click_input[0]), int(click_input[1]))
         print(f"Start position set to: {self.start}")
@@ -47,7 +43,7 @@ class Visualization:
         print("Click to set the goal position...")
         plt.title("Click to set the goal position...")
         self.goal = (0, 0)
-        while not in_bound(grid, self.goal) or self.goal in zip(self.ox, self.oy):
+        while not grid.in_bound(self.goal) or self.goal in zip(self.ox, self.oy):
             click_input = plt.ginput(1)[0]  # Get one click
             self.goal = (int(click_input[0]), int(click_input[1]))
         print(f"Goal position set to: {self.goal}")

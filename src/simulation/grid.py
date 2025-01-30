@@ -20,19 +20,31 @@ class Grid:
 
     def grid_index_to_position(self, grid_index):
         """Convertit les indices de la grille en coordonnées physiques."""
-        x_pos = (grid_index[1] - self.grid_cols // 2) * self.cell_size
-        y_pos = (grid_index[0] - self.grid_rows // 2) * self.cell_size
+        x_pos = (grid_index[0] - self.grid_cols // 2) * self.cell_size
+        y_pos = (grid_index[1] - self.grid_rows // 2) * self.cell_size
         return x_pos, y_pos, self.table_height
 
+    def grid_index_to_positionv2(self, grid_index):
+        y_idx, x_idx = grid_index
+        # Calculate the position based on the grid index
+        x_pos = (x_idx * self.cell_size)  # No adjustment needed for x
+        y_pos = (y_idx * self.cell_size)  # No adjustment needed for y
+        return x_pos, y_pos, self.table_height
+
+
     def mark_can_on_grid(self, center, radius):
-        x_idx, y_idx = self.position_to_grid_index(center)
+        y_idx, x_idx = self.position_to_grid_index(center)
         radius_cells = int(radius / self.cell_size)
         ox, oy = [], []
         for dx in range(-radius_cells, radius_cells + 1):
             for dy in range(-radius_cells, radius_cells + 1):
                 nx, ny = x_idx + dx, y_idx + dy
-                if 0 <= nx < self.grid_rows and 0 <= ny < self.grid_cols:
+                if 0 <= nx < self.grid_cols and 0 <= ny < self.grid_rows:
                     if np.sqrt(dx**2 + dy**2) <= radius_cells:
                         ox.append(nx)
                         oy.append(ny)
         return oy, ox
+
+    def in_bound(self, pos):
+        x, y = pos
+        return 0 <= x < self.grid_cols and 0 <= y < self.grid_rows
