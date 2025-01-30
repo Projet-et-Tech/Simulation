@@ -51,7 +51,7 @@ def initialize_map(grid):
             ox.append(x)
             oy.append(y)
 
-    return ox, oy
+    return oy, ox
 
 def initialize_cans(grid, can_radius):
     x_dim = grid.grid_rows

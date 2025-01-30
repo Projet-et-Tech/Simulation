@@ -14,9 +14,9 @@ class Grid:
 
     def position_to_grid_index(self, position):
         """Convertit une position physique en indices de la grille alignée avec l'origine."""
-        x_index = int((position[0] / self.cell_size) + (self.grid_rows // 2))
-        y_index = int((position[1] / self.cell_size) + (self.grid_cols // 2))
-        return x_index, y_index
+        x_index = int((position[0] / self.cell_size) + (self.grid_cols // 2))
+        y_index = int((position[1] / self.cell_size) + (self.grid_rows // 2))
+        return y_index, x_index
 
     def grid_index_to_position(self, grid_index):
         """Convertit les indices de la grille en coordonnées physiques."""
@@ -35,4 +35,4 @@ class Grid:
                     if np.sqrt(dx**2 + dy**2) <= radius_cells:
                         ox.append(nx)
                         oy.append(ny)
-        return ox, oy
+        return oy, ox
