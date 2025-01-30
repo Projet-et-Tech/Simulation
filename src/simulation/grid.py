@@ -24,14 +24,6 @@ class Grid:
         y_pos = (grid_index[1] - self.grid_rows // 2) * self.cell_size
         return x_pos, y_pos, self.table_height
 
-    def grid_index_to_positionv2(self, grid_index):
-        y_idx, x_idx = grid_index
-        # Calculate the position based on the grid index
-        x_pos = (x_idx * self.cell_size)  # No adjustment needed for x
-        y_pos = (y_idx * self.cell_size)  # No adjustment needed for y
-        return x_pos, y_pos, self.table_height
-
-
     def mark_can_on_grid(self, center, radius):
         y_idx, x_idx = self.position_to_grid_index(center)
         radius_cells = int(radius / self.cell_size)

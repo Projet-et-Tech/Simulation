@@ -6,7 +6,7 @@ from simulation.robot import Robot
 from simulation.pathfinding import AStar, DStarLite
 from simulation.pybullet_manager import PyBulletManager
 from simulation.setup import load_objects, create_environment, initialize_map, initialize_cans
-from utils.math_helpers import interpolate_position, extract_path
+from utils.math_helpers import interpolate_position, extract_waypoints
 from utils.visualization import Visualization
 import config as config
 
@@ -24,8 +24,8 @@ def main():
     can_ids = load_objects(pybullet_manager, "src/urdf_models/conserve.urdf", [0.7071, 0, 0, 0.7071], config.CAN_POSITIONS)
 
     # Charger les planches
-    plank_horizontal_ids = load_objects(pybullet_manager, "src/urdf_models/planche.urdf", [0.7071, 0, 0, 0.7071], config.PLANK_POSITIONS_HORIZONTAL)
-    plank_vertical_ids = load_objects(pybullet_manager, "src/urdf_models/planche.urdf", [0.5, 0.5, 0.5, 0.5], config.PLANK_POSITIONS_VERTICAL)
+    #plank_horizontal_ids = load_objects(pybullet_manager, "src/urdf_models/planche.urdf", [0.7071, 0, 0, 0.7071], config.PLANK_POSITIONS_HORIZONTAL)
+    #plank_vertical_ids = load_objects(pybullet_manager, "src/urdf_models/planche.urdf", [0.5, 0.5, 0.5, 0.5], config.PLANK_POSITIONS_VERTICAL)
 
     print("""
 ======================================================
@@ -37,7 +37,7 @@ Fin initialisation pybullet
 
     # Obstacles
     ox, oy = initialize_map(grid)
-    ox_cans, oy_cans = initialize_cans(grid, config.CAN_RADIUS)
+    ox_cans, oy_cans = initialize_cans(grid, config.CAN_RADIUS+config.ROBOT_RADIUS)
     spoofed_ox, spoofed_oy = [ox_cans], [oy_cans]
     obstacles = [ox, oy, spoofed_ox, spoofed_oy]
     
@@ -62,9 +62,9 @@ Fin initialisation pybullet
                                                             spoofed_ox=spoofed_ox,
                                                             spoofed_oy=spoofed_oy)
     if path_exists:
-        cpx, cpy, extraction_time= extract_path(pathx, pathy, threshold=4.5)
+        wpx, wpy, extraction_time= extract_waypoints(pathx, pathy, threshold=4.5)
 
-    visualization.show_path(path_exists, pathx, pathy, cpx, cpy)
+    visualization.show_path(path_exists, pathx, pathy, wpx, wpy)
 
     # Gestion du chemin et déplacement du robot
     if not path_exists:
@@ -72,41 +72,41 @@ Fin initialisation pybullet
         print(f"({int(compute_time*1e3)}ms)")
     else:
         print("Path found", end=" ")
+        print(f"({int(compute_time*1e3)}ms)\n")
 
-        interpolation_steps = 20
+        print("Following the path :")
 
-        for main_point_id in range(len(cpx)):
-            x_pos, y_pos, z_pos = grid.grid_index_to_position(step)
+        for main_point_id in range(len(wpx)):
+            target_position = (wpx[main_point_id], wpy[main_point_id])
+            x_pos, y_pos, z_pos = grid.grid_index_to_position(target_position)
             next_pos = [x_pos, y_pos]
 
-            robot_pos, _ = robot.get_position_and_orientation()
-            robot_pos_2d = robot_pos[:2]
+            while True:
+                robot_pos, _ = robot.get_position_and_orientation()
+                robot_pos_2d = robot_pos[:2]
 
-            interpolated_positions = interpolate_position(robot_pos_2d, next_pos, interpolation_steps)
+                # Calculate the direction to the target position
+                delta_x = next_pos[0] - robot_pos_2d[0]
+                delta_y = next_pos[1] - robot_pos_2d[1]
+                distance_to_target = np.sqrt(delta_x**2 + delta_y**2)
 
-            for inter_pos in interpolated_positions:
-                delta_x = inter_pos[0] - robot_pos[0]
-                delta_y = inter_pos[1] - robot_pos[1]
-                distance_to_travel = np.sqrt(delta_x**2 + delta_y**2)
+                # Check if the robot is close enough to the target position
+                if distance_to_target < 0.01: # proximity_threshold de 1cm
+                    print(f"Reached waypoint {main_point_id}: {next_pos}")
 
-                if distance_to_travel > 0.01:
-                    direction_angle = np.arctan2(delta_y, delta_x)
-                    linear_velocity = [
-                        config.ROBOT_SPEED * np.cos(direction_angle),
-                        config.ROBOT_SPEED * np.sin(direction_angle),
-                        0
-                    ]
+                    break  # Exit the loop to move to the next waypoint
+
+                # Normalize the direction and set the velocity
+                if distance_to_target > 0:
+                    direction = [delta_x / distance_to_target, delta_y / distance_to_target]
+                    linear_velocity = [config.ROBOT_SPEED * direction[0], config.ROBOT_SPEED * direction[1], 0]
                     robot.set_velocity(linear_velocity=linear_velocity)
+                else:
+                    robot.set_velocity([0, 0, 0])  # Stop if very close to the target
+
 
                     pybullet_manager.step_simulation()
-                    time.sleep(1 / 240.0)
-
-                grid.grid[step[0]][step[1]] = 4
-                visualization.update_grid(grid.grid)
-
-            grid.grid[step[0]][step[1]] = 0
-            visualization.update_grid(grid.grid)
-
+                    time.sleep(1 / 60.0)
         robot.set_velocity([0, 0, 0])
 
     print("""\n
@@ -114,6 +114,7 @@ Fin initialisation pybullet
 
 ======================================================
     """)
+    time.sleep(10)
     pybullet_manager.disconnect()
 
 if __name__ == "__main__":
