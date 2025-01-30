@@ -108,6 +108,7 @@ def cluster_major_positions(major_positions, px, py, threshold):
 
     # Iterate through the major positions
     for i in range(len(major_positions)-1):
+        # mp sont des indices !!!
         mp1 = major_positions[i]
         mp2 = major_positions[i+1]
         point_a = (px[mp1], py[mp1])
@@ -142,14 +143,17 @@ def extract_path(px, py, threshold):
     major_positions = extract_major_positions(px, py)
     clusters = cluster_major_positions(major_positions, px, py, threshold)
 
+    # mp sont des indices !!!
     mp_in_cluster = [mp for c in clusters for mp in c]
     barycenters = []
     for c in clusters:
-        list_pos_x =[px[mp] for mp in c]
-        list_pos_y =[py[mp] for mp in c]
-        len_pos = len(c)
-        barycenter = (int(sum(list_pos_x)/len_pos), int(sum(list_pos_y)/len_pos))
-        barycenters.append(barycenter)
+        if 0 in c:
+            barycenters.append((px[0], py[0]))
+        elif (len(px)-1) in c:
+            barycenters.append((px[-1], py[-1]))
+        else:
+            id_bary = c[len(c)//2]
+            barycenters.append((px[id_bary], py[id_bary]))
     
     cpx, cpy = [], []
     i, id_cluster = 0, 0
