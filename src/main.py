@@ -3,15 +3,15 @@ import time
 import numpy as np
 from simulation.robot import Robot
 from simulation.pathfinding import Pathfinding
-from simulation.grid import Grid
 from simulation.pybullet_manager import PyBulletManager
 from utils.math_helpers import interpolate_position
 from utils.visualization import Visualization
 import config as config
-from simulation.setup import load_objects, add_scene_to_grid, initialize_grid_with_obstacles, create_environment
+from simulation.setup import load_objects, create_environment, initialize_map, initialize_cans
 
 def main():
     # Initialisation de PyBullet
+    # ==========================
     pybullet_manager = PyBulletManager(debug=config.DEBUG)
     pybullet_manager.reset_camera(distance=2.0, yaw=0, pitch=-45, target=[0, 0, 0])
     pybullet_manager.set_real_time_simulation(True)
@@ -29,23 +29,24 @@ def main():
     # Initialisation du robot
     robot = Robot("src/urdf_models/robot_cube.urdf", config.ROBOT_START_POS, [0, 0, 0, 1])
 
-    # Création de la grille et ajout des obstacles
-    grid = Grid()
-    initialize_grid_with_obstacles(grid)
+    # Fin initialisation pybullet
+    # ===========================
 
-    # Ajout de la scène
-    add_scene_to_grid(grid)
+    # Obstacles
+    ox, oy = initialize_map(config.X_DIM, config.Y_DIM, config.CELL_SIZE)
+    ox_cans, oy_cans = initialize_cans(config.X_DIM, config.Y_DIM, config.CELL_SIZE, config.CAN_RADIUS)
+    spoofed_ox, spoofed_oy = [ox_cans], [oy_cans]
+    obstacles = [ox, oy, spoofed_ox, spoofed_oy]
+    
+    # Visualisation
+    visualization = Visualization(obstacles, config.X_DIM, config.Y_DIM, config.CELL_SIZE)
 
     # Points de départ et d’arrivée
-    start = grid.position_to_grid_index(config.ROBOT_START_POS)
-    goal = grid.position_to_grid_index([-1.125, 0.8, 0.1])
+    start, goal = visualization.get_start_goal()
 
     # Algorithme A*
-    pathfinder = Pathfinding(grid.grid)
-    path = pathfinder.a_star(start, goal)
-
-    # Visualisation
-    visualization = Visualization(grid.grid, config.CELL_SIZE, start, goal)
+    #pathfinder = Pathfinding(grid.grid)
+    #path = pathfinder.a_star(start, goal)
 
     # Gestion du chemin et déplacement du robot
     if path:

@@ -7,6 +7,12 @@ ROBOT_SPEED = 0.4
 ROBOT_ROTATION_SPEED = 5
 DEBUG = False
 
+CAN_RADIUS = 0.17/2 
+ROBOT_RADIUS = 0.45/2
+
+X_DIM = int(TABLE_LENGTH / CELL_SIZE)
+Y_DIM = int(TABLE_WIDTH / CELL_SIZE)
+
 CAN_POSITIONS = [
     # De gauche a droite de haut en bas
     # Moitie gauche
