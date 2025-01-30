@@ -1,13 +1,14 @@
 import pybullet as p
 import time
 import numpy as np
+from simulation.grid import Grid
 from simulation.robot import Robot
 from simulation.pathfinding import AStar, DStarLite
 from simulation.pybullet_manager import PyBulletManager
-from utils.math_helpers import interpolate_position, extract_path, grid_index_to_position
+from simulation.setup import load_objects, create_environment, initialize_map, initialize_cans
+from utils.math_helpers import interpolate_position, extract_path
 from utils.visualization import Visualization
 import config as config
-from simulation.setup import load_objects, create_environment, initialize_map, initialize_cans
 
 def main():
     # Initialisation de PyBullet
@@ -26,24 +27,28 @@ def main():
     plank_horizontal_ids = load_objects(pybullet_manager, "src/urdf_models/planche.urdf", [0.7071, 0, 0, 0.7071], config.PLANK_POSITIONS_HORIZONTAL)
     plank_vertical_ids = load_objects(pybullet_manager, "src/urdf_models/planche.urdf", [0.5, 0.5, 0.5, 0.5], config.PLANK_POSITIONS_VERTICAL)
 
-    # Fin initialisation pybullet
-    # ===========================
+    print("""
+======================================================
+Fin initialisation pybullet
+======================================================
+    """)
 
-    # ===========================
+    grid = Grid()
+
     # Obstacles
-    ox, oy = initialize_map(config.X_DIM, config.Y_DIM, config.CELL_SIZE)
-    ox_cans, oy_cans = initialize_cans(config.X_DIM, config.Y_DIM, config.CELL_SIZE, config.CAN_RADIUS)
+    ox, oy = initialize_map(grid)
+    ox_cans, oy_cans = initialize_cans(grid, config.CAN_RADIUS)
     spoofed_ox, spoofed_oy = [ox_cans], [oy_cans]
     obstacles = [ox, oy, spoofed_ox, spoofed_oy]
     
     # Visualisation
-    visualization = Visualization(obstacles, config.X_DIM, config.Y_DIM, config.CELL_SIZE)
+    visualization = Visualization(obstacles, grid)
 
     # Points de départ et d’arrivée
-    start, goal = visualization.get_start_goal()
+    start, goal = visualization.get_start_goal(grid)
 
     # Initialisation du robot
-    real_start = grid_index_to_position(start, config.X_DIM, config.Y_DIM, config.CELL_SIZE)
+    real_start = grid_index_to_position(start)
     robot = Robot("src/urdf_models/robot_cube.urdf", [real_start[0], real_start[1], config.TABLE_HEIGHT + 0.1], [0, 0, 0, 1])
     pybullet_manager.step_simulation()
 
@@ -62,7 +67,7 @@ def main():
     visualization.show_path(path_exists, pathx, pathy, cpx, cpy)
 
     # Gestion du chemin et déplacement du robot
-    if not False:
+    if not path_exists:
         print("No path found", end=" ")
         print(f"({int(compute_time*1e3)}ms)")
     else:
@@ -70,7 +75,7 @@ def main():
 
         interpolation_steps = 20
 
-        for step in path:
+        for main_point_id in range(len(cpx)):
             x_pos, y_pos, z_pos = grid.grid_index_to_position(step)
             next_pos = [x_pos, y_pos]
 
@@ -104,6 +109,11 @@ def main():
 
         robot.set_velocity([0, 0, 0])
 
+    print("""\n
+======================================================
+
+======================================================
+    """)
     pybullet_manager.disconnect()
 
 if __name__ == "__main__":
