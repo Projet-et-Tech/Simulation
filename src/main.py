@@ -114,7 +114,7 @@ Fin initialisation pybullet
 
 ======================================================
     """)
-    time.sleep(10)
+    time.sleep(2)
     pybullet_manager.disconnect()
 
 if __name__ == "__main__":

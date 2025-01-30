@@ -53,11 +53,14 @@ class Visualization:
         print()
         return self.start, self.goal
 
-    def show_path(self, path_exists, pathx, pathy, cpx, cpy):
+    def show_path(self, path_exists, pathx, pathy, wpx, wpy):
         if  path_exists:
             plt.title("Path found", color='green', loc='left')
             plt.plot(pathx, pathy, ".c", alpha=1.0)
-            plt.plot(cpx, cpy, "dr", alpha=1.0)
+            plt.plot(wpx, wpy, "dr", alpha=1.0)
+            for i, coords in enumerate(zip(wpx, wpy)):
+                x, y = coords
+                plt.text(x, y+1, str(i), color="red", fontsize=12)
         if  not path_exists:
             plt.title("No path found", color='red', loc='left')
         plt.legend(self.columns, self.label_column,
@@ -65,4 +68,4 @@ class Visualization:
                     bbox_to_anchor=(1, 1.07),
                     fontsize="xx-small",
                     ncol=5)
-        plt.show()
+        plt.show(block=True)
