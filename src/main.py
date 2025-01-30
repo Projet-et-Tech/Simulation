@@ -62,10 +62,12 @@ Fin initialisation pybullet
                                                             goal=goal,
                                                             spoofed_ox=spoofed_ox,
                                                             spoofed_oy=spoofed_oy)
+    print(path_exists)
     if path_exists:
         wpx, wpy, extraction_time= extract_waypoints(pathx, pathy, threshold=4.5)
-
-    visualization.show_path(path_exists, pathx, pathy, wpx, wpy)
+        visualization.show_path(path_exists, pathx, pathy, wpx, wpy)
+    else:
+        visualization.show_path(path_exists, pathx, pathy, [], [])
 
     # Gestion du chemin et déplacement du robot
     if not path_exists:
