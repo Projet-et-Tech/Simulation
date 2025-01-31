@@ -20,9 +20,9 @@ def is_in_obstacle(position, obstacles):
                 return True
     return False
 
-class Visualization:
+class VisualizationMPL:
     """
-    Classe Visualization pour afficher une grille avec des obstacles, un point de départ et un point d'arrivée.
+    Classe Visualization MatPlotLib pour afficher une grille avec des obstacles, un point de départ et un point d'arrivée.
     Cette classe utilise matplotlib pour visualiser une grille où chaque cellule peut représenter un obstacle, 
     le point de départ, le point d'arrivée, un robot, ou une zone interdite. 
     """

@@ -84,7 +84,7 @@ def cluster_major_positions(major_positions, px, py, threshold):
     return clusters
 
 def extract_waypoints(px, py, threshold):
-    print("Extracting waypoints...")
+    print("Extracting waypoints...\n")
     time_start = time.time()
     major_positions = extract_major_positions(px, py)
     clusters = cluster_major_positions(major_positions, px, py, threshold)

@@ -8,7 +8,7 @@ from simulation.pathfollowing import extract_waypoints
 from simulation.pybullet_manager import PyBulletManager
 from simulation.setup import load_objects, create_environment, initialize_map, initialize_cans
 from utils.math_helpers import interpolate_position
-from utils.visualization import Visualization
+from utils.visualization import VisualizationMPL
 import config as config
 
 def main():
@@ -43,7 +43,7 @@ Fin initialisation pybullet
     obstacles = [ox, oy, spoofed_ox, spoofed_oy]
     
     # Visualisation
-    visualization = Visualization(obstacles)
+    visualization = VisualizationMPL(obstacles)
 
     # Points de départ et d’arrivée
     start, goal = visualization.get_start_goal(grid)
@@ -53,15 +53,19 @@ Fin initialisation pybullet
     robot = Robot("src/urdf_models/robot_cube.urdf", [real_start[0], real_start[1], config.TABLE_HEIGHT + 0.1], [0, 0, 0, 1])
     pybullet_manager.step_simulation()
 
-    # Algorithme A*
-    #a_star = AStar(grid.grid)
-    #path = a_star.main(start, goal)
+    algo = 1 + 0
 
-    dstarlite = DStarLite(ox, oy)
-    path_exists, pathx, pathy, compute_time = dstarlite.main(start=start,
-                                                            goal=goal,
-                                                            spoofed_ox=spoofed_ox,
-                                                            spoofed_oy=spoofed_oy)
+    if algo == 1:
+        # Algorithme A*
+        a_star = AStar(ox, oy, spoofed_ox, spoofed_oy)
+        path_exists, pathx, pathy, compute_time = a_star.main(start, goal)
+    else:
+        # Algorithme D*Lite
+        dstarlite = DStarLite(ox, oy)
+        path_exists, pathx, pathy, compute_time = dstarlite.main(start=start,
+                                                                goal=goal,
+                                                                spoofed_ox=spoofed_ox,
+                                                                spoofed_oy=spoofed_oy)
     if path_exists:
         print("Path found", end=" ")
         print(f"({int(compute_time*1e3)}ms)\n")
