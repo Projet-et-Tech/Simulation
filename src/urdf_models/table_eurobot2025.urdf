@@ -15,8 +15,8 @@
     
     <!-- Inertial properties: Mass and Inertia -->
     <inertial>
-		<mass value="1000.0"/>  <!-- Set a realistic mass for the table -->
-        <inertia ixx="0.2" ixy="0.0" ixz="0.0" iyy="0.2" iyz="0.0" izz="0.2"/>
+	  <mass value="1000.0"/>  <!-- Set a realistic mass for the table -->
+      <inertia ixx="0.2" ixy="0.0" ixz="0.0" iyy="0.2" iyz="0.0" izz="0.2"/>
     </inertial>
   </link>
   
@@ -156,5 +156,12 @@
     <child link="ramps"/>
     <origin rpy="1.5708 0 0" xyz="0 0 0"/>
   </joint>
+
+	<!-- Fix table (no gravity) -->
+	<link name="world" />
+	<joint name="world_to_base_link" type="fixed">
+	  <parent link="world" />
+	  <child link="table_base" />
+	</joint>
 
 </robot>

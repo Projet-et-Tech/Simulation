@@ -1,11 +1,40 @@
+# -------- TABLE -------- #
+
 TABLE_HEIGHT = 0.1
 TABLE_LENGTH = 3
 TABLE_WIDTH = 2
+
 CELL_SIZE = 0.05
+
+# -------- ARUCO MARKERS -------- #
+
+HORIZONTAL_DISTANCE_CM = 80     # Table horizontal distance between Aruco (from centers)
+VERTICAL_DISTANCE_CM = 180      # Table vertical distance between Aruco (from centers)
+SCALE_FACTOR = 2
+
+CORNER_TOP_LEFT_ID = 22
+CORNER_TOP_RIGHT_ID = 20
+CORNER_BOTTOM_LEFT_ID = 23
+CORNER_BOTTOM_RIGHT_ID = 21
+
+# -------- ROBOT -------- #
+
 ROBOT_START_POS = [0, 0, TABLE_HEIGHT + 0.1]
 ROBOT_SPEED = 0.4
 ROBOT_ROTATION_SPEED = 5
+
+PAMI_HEIGHT = 0.1
+
+# -------- CAMERA -------- #
+
+CAM_POS = [1.5, 0, 1]
+CAM_ORIENTATION_DEG = [180, 120, 0]
+
+# -------- DEBUG -------- #
+
 DEBUG = False
+
+# -------- OBSTACLES -------- #
 
 CAN_POSITIONS = [
     # De gauche a droite de haut en bas

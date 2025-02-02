@@ -1,90 +1,83 @@
 import pybullet as p
-import pybullet_data
-import numpy as np
 import cv2
+import time
 
-from utils.virtualCamera import init_camera, read_camera, adjust_fov_parameters, update_fov_parameters
-from utils.image import imageMain
 from simulation.pybullet_manager import PyBulletManager
-from utils.visualization import Visualization
-from config import TABLE_HEIGHT, TABLE_LENGTH, TABLE_WIDTH, CELL_SIZE, ROBOT_START_POS, ROBOT_SPEED, ROBOT_ROTATION_SPEED, DEBUG, CAN_POSITIONS, PLANK_POSITIONS_HORIZONTAL, PLANK_POSITIONS_VERTICAL
-from simulation.grid import Grid
-from simulation.setup import load_objects, add_scene_to_grid, initialize_grid_with_obstacles, create_environment
+from config import TABLE_LENGTH, TABLE_WIDTH, ROBOT_START_POS, DEBUG, CAM_POS, CAM_ORIENTATION_DEG, PAMI_HEIGHT
+from simulation.setup import create_environment
 
-# ---------------- Configuration de PyBullet ----------------
+from utils.virtualCamera import init_camera, read_camera
+from utils.imageTransform import calibrationAndTransform
+from utils.perspectiveCorrection import convert_2D_to_3D
+
+# ------------------ GLOBAL VARIABLES ------------------
+
+clicked_point= None
+
+# ------------------ MOUSE CLICK CALLBACK ------------------ (temp, will be auto detection by aruco on PAMIs)
+
+def mouse_callback(event, x, y, flags, param):
+    """Captures the user's click position on the image."""
+    global clicked_point
+    if event == cv2.EVENT_LBUTTONDOWN:
+        clicked_point = (x, y)
+        print(f"Clicked at: {clicked_point}")
+        cv2.destroyAllWindows()  # Close the window after clicking
+
+def capture_click(frame):
+    """Displays the camera feed and waits for the user to click on an object."""
+    global clicked_point
+    cv2.namedWindow("Camera Feed", cv2.WINDOW_NORMAL)
+    cv2.imshow('Camera Feed', frame)
+    cv2.setMouseCallback('Camera Feed', mouse_callback)
+
+    while True:
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break  # Exit loop if 'q' is pressed
+        if clicked_point:
+            return clicked_point  # Return the clicked coordinates
+
+    cv2.destroyAllWindows()
+
+# ------------------ PYBULLET SIMULATION SETUP ------------------
 
 debug = DEBUG
 
-# Initialisation de PyBullet avec PyBulletManager
+# Initialize PyBullet with PyBulletManager
 pybullet_manager = PyBulletManager(debug=debug)
 pybullet_manager.reset_camera(distance=2.0, yaw=0, pitch=-45, target=[0, 0, 0])
 pybullet_manager.set_real_time_simulation(True)
 
-# Créer l'environnement (sol et table)
+# Create environment (ground and table)
 plane_id, table_id = create_environment(pybullet_manager)
 
-# ---------------- Création du sol ----------------
+# ------------------ LOAD ROBOT ------------------
 
-rotationX90 = [0.7071, 0, 0, 0.7071] # Rotation de 90 sur x en quaternion
-rotationZ90 = [0, 0, 0.7071, 0.7071] # Rotation de 90 sur z en quaternion
-rotationXZ90 = [0.5, 0.5, 0.5, 0.5] # Rotation de 90 sur x et z en quaternion
+robot_id = pybullet_manager.load_urdf("src/urdf_models/robot_pami.urdf", ROBOT_START_POS, [0, 0, 0, 1])
 
-# ---------------- Création des conserves ----------------
+# ------------------ CAMERA CAPTURE & OBJECT DETECTION ------------------
 
-# Charger les conserves
-can_ids = load_objects(pybullet_manager, "src/urdf_models/conserve.urdf", rotationX90, CAN_POSITIONS)
+cam1 = init_camera(CAM_POS, CAM_ORIENTATION_DEG)
+time.sleep(2)   # wait for PAMI to fall before taking picture (temp, not in video)
+rgb_img1 = read_camera(cam1)
 
-# ---------------- Crération des planches ----------------
+transformed_frame = calibrationAndTransform(rgb_img1, "Cam1")
 
-# Charger les planches
-plank_horizontal_ids = load_objects(pybullet_manager, "src/urdf_models/planche.urdf", rotationX90, PLANK_POSITIONS_HORIZONTAL)
-plank_vertical_ids = load_objects(pybullet_manager, "src/urdf_models/planche.urdf", rotationXZ90, PLANK_POSITIONS_VERTICAL)
+# Capture the user's click position
+y, x = capture_click(transformed_frame)
 
-# ----------------  Paramètres du robot ----------------
+# ------------------ CONVERT 2D IMAGE COORDINATES TO 3D ------------------
 
-# Charger le robot
-robot_id = pybullet_manager.load_urdf("src/urdf_models/robot_cube.urdf", ROBOT_START_POS, [0, 0, 0, 1])
+x_true, y_true = convert_2D_to_3D(x, y, transformed_frame, TABLE_LENGTH, TABLE_WIDTH, CAM_POS, PAMI_HEIGHT, ROBOT_START_POS)
 
-# Variables pour les deplacements
-robot_speed = ROBOT_SPEED  # Vitesse de deplacement (m/s)
-robot_rotation_speed = ROBOT_ROTATION_SPEED  # Vitesse de rotation (rad/s)
-
-# ---------------- Boucle principale de simulation ----------------
-
-# Creer les cameras virtuelles
-cam1 = init_camera([1.5, 0, 1], [180, 135, 0])
-cam2 = init_camera([-1.5, -1, 1], [0, 40, 40])
-adjust_fov_parameters()
-
-# Création de la grille et ajout des obstacles
-grid = Grid()
-initialize_grid_with_obstacles(grid)
-
-# Ajout de la scène
-add_scene_to_grid(grid)
-
-# Points de départ et d'arrivée
-start = grid.position_to_grid_index(ROBOT_START_POS)
-goal = grid.position_to_grid_index([-1.125, 0.8, 0.1])
+# ------------------ VISUALIZATION IN PYBULLET ------------------
 
 while True:
-    update_fov_parameters()
+    # Corrected detection (Green)
+    p.addUserDebugLine([x_true, y_true, PAMI_HEIGHT], [x_true, y_true, 1], [0, 1, 0], 2, 0)
+    p.addUserDebugText("Il est la", [x_true, y_true, 1], textColorRGB=[0, 1, 0], textSize=1.5)
 
-    # Lire les cameras virtuelles
-    rgb_img1 = read_camera(cam1)
-    cv2.namedWindow("Camera 1", cv2.WINDOW_NORMAL)
-    cv2.imshow("Camera 1", rgb_img1)
-    imageMain(rgb_img1, "Cam1")
+# ------------------ CLEANUP ------------------
 
-    rgb_img2 = read_camera(cam2)
-    cv2.namedWindow("Camera 2", cv2.WINDOW_NORMAL)
-    cv2.imshow("Camera 2", rgb_img2)
-    imageMain(rgb_img2, "Cam2")
-
-    # Ajout d'un délai pour rafraîchir la fenêtre et capturer les événements clavier
-    if cv2.waitKey(1) & 0xFF == ord('q'):  # Appuyez sur 'q' pour quitter
-        break
-
-# ---------------- Deconnexion de PyBullet ----------------
 cv2.destroyAllWindows()
-pybullet_manager.disconnect()
+p.disconnect()
