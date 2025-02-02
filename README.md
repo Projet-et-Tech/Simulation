@@ -63,7 +63,7 @@ Pour repérer le robot, nous utiliserons 2 caméras, placées à 1m de hauteur (
     - une qualité d'image de 1080 x 720p (vidéo)
     - une ouverture horizontale de 43, 50 en verticale
 
-Ces caméras nous permettront, grâce aux 4 codes Aruco placés sur la table et de celui placé sur le robot, de récupérer les coordonnées du robot dans le réferentiel de la table en temps réel (et donc de pouvoir déterminer précisemment sa position). 
+Ces caméras nous permettront, grâce aux 4 codes Aruco placés sur la table et de celui placé sur le robot, de récupérer les coordonnées du robot dans le réferentiel de la table en temps réel (et donc de pouvoir déterminer précisemment sa position). Cette opération est réalisé une unique fois, et peut en cas de problème de détéction, être réalisée manuellement par un opérateur lors de l'installation. 
 
 Un des autres objectifs est de récupérer les coordonnées en temps réel des éléments de jeu et du robot adverse. Cela reste à être implémenté.
 
@@ -74,7 +74,11 @@ Cette imagerie est réalisée grâce à la bibliothèque OpenCV sur python.
 - [x] Problèmes de coordonnées (coordination des coordonnées simulation / grille)
 - [x] Problème des cellules : changement de taille -> n'importe quoi
 - [x] Définir la taille des obstacles
-- [x] Caméra : détecter les éléments de jeu et retourner leurs coordonnées
+- [ ] Caméra : détecter les éléments de jeu et retourner leurs coordonnées
+- [ ] Tester la détéction pour des positions proches des bords
+- [ ] Ajouter un Aruco sur les robots dans la simulation
+- [ ] Mettre en place une détéction en temps réel
+- [ ] Installer les caméras et comparer avec la simulation
 
 
 
