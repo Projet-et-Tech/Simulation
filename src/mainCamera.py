@@ -3,7 +3,7 @@ import cv2
 import time
 
 from simulation.pybullet_manager import PyBulletManager
-from config import TABLE_LENGTH, TABLE_WIDTH, ROBOT_START_POS, DEBUG, CAM_POS, CAM_ORIENTATION_DEG, PAMI_HEIGHT
+from config import TABLE_LENGTH, TABLE_WIDTH, ROBOT_START_POS, DEBUG, CAM1_POS, CAM1_ORIENTATION_DEG, CAM2_POS, CAM2_ORIENTATION_DEG, PAMI_HEIGHT
 from simulation.setup import create_environment
 
 from utils.virtualCamera import init_camera, read_camera
@@ -57,18 +57,19 @@ robot_id = pybullet_manager.load_urdf("src/urdf_models/robot_pami.urdf", ROBOT_S
 
 # ------------------ CAMERA CAPTURE & OBJECT DETECTION ------------------
 
-cam1 = init_camera(CAM_POS, CAM_ORIENTATION_DEG)
+cam1 = init_camera(CAM1_POS, CAM1_ORIENTATION_DEG)
+cam2 = init_camera(CAM2_POS, CAM2_ORIENTATION_DEG)
 time.sleep(2)   # wait for PAMI to fall before taking picture (temp, not in video)
 rgb_img1 = read_camera(cam1)
 
-transformed_frame = calibrationAndTransform(rgb_img1, "Cam1")
+transformed_frame = calibrationAndTransform(rgb_img1)
 
 # Capture the user's click position
 y, x = capture_click(transformed_frame)
 
 # ------------------ CONVERT 2D IMAGE COORDINATES TO 3D ------------------
 
-x_true, y_true = convert_2D_to_3D(x, y, transformed_frame, TABLE_LENGTH, TABLE_WIDTH, CAM_POS, PAMI_HEIGHT, ROBOT_START_POS)
+x_true, y_true = convert_2D_to_3D(x, y, transformed_frame, TABLE_LENGTH, TABLE_WIDTH, CAM1_POS, PAMI_HEIGHT, ROBOT_START_POS)
 
 # ------------------ VISUALIZATION IN PYBULLET ------------------
 

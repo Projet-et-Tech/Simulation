@@ -4,17 +4,17 @@
         <visual>
             <origin xyz="0 0 0.05" rpy="0 0 0"/>
             <geometry>
-            <box size="0.1 0.1 0.1"/>  <!-- Dimensions 0.1 m x 0.1 m x 0.1m -->
+            <mesh filename="pami.obj"/>  <!-- Dimensions 0.1 m x 0.1 m x 0.1m -->
             </geometry>
             <material name="blue">
-            <color rgba="0 1 1 1"/>  <!-- Couleur cyan pour le robot -->
+            <color rgba="1 1 1 1"/>
             </material>
         </visual>
 		
         <collision>
             <origin xyz="0 0 0.05" rpy="0 0 0"/>
             <geometry>
-                <box size="0.1 0.1 0.1"/>  <!-- Dimensions 0.1 m x 0.1 m x 0.1m -->
+                <mesh filename="pami.obj"/>  <!-- Dimensions 0.1 m x 0.1 m x 0.1m -->
             </geometry>
         </collision>
 		

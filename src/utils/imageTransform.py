@@ -131,7 +131,7 @@ def process_markers(frame, marker_IDs, marker_corners):
 
 # ---------------------- MAIN PROGRAM ---------------------- #
 
-def calibrationAndTransform(frame, name):
+def calibrationAndTransform(frame):
     """
     Main function to handle manual calibration and perspective transformation.
 
