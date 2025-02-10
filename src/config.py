@@ -24,11 +24,15 @@ ROBOT_SPEED = 0.4
 ROBOT_ROTATION_SPEED = 5
 
 PAMI_HEIGHT = 0.1
+PAMI_ID = 6
 
 # -------- CAMERA -------- #
 
-CAM_POS = [1.5, 0, 1]
-CAM_ORIENTATION_DEG = [180, 120, 0]
+CAM1_POS = [1.5, 0, 1]
+CAM1_ORIENTATION_DEG = [180, 120, 0]
+
+CAM2_POS = [-1.5, -1, 1]
+CAM2_ORIENTATION_DEG = [0, 40, 40]
 
 # -------- DEBUG -------- #
 
