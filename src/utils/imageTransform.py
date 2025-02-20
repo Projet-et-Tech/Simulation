@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from cv2 import aruco
 
-from config import HORIZONTAL_DISTANCE_CM, VERTICAL_DISTANCE_CM, SCALE_FACTOR, CORNER_TOP_LEFT_ID, CORNER_TOP_RIGHT_ID, CORNER_BOTTOM_LEFT_ID, CORNER_BOTTOM_RIGHT_ID
+from config import HORIZONTAL_DISTANCE_CM, VERTICAL_DISTANCE_CM, HORIZONTAL_MARGIN_CM, VERTICAL_MARGIN_CM, SCALE_FACTOR, CORNER_TOP_LEFT_ID, CORNER_TOP_RIGHT_ID, CORNER_BOTTOM_LEFT_ID, CORNER_BOTTOM_RIGHT_ID
 
 from utils.perspectiveCorrection import getCornersFromUserClick
 
@@ -37,6 +37,18 @@ def calculate_pixels_per_cm(corners_in_order):
     # Return the average scaling factor
     return (pixels_per_cm_hor + pixels_per_cm_ver) / 2
 
+def sort_by_target_order(marker_centers):
+    """ Trie les centres des marqueurs d'interet selon les coins definis dans l'ordre correct """
+    try:
+        return np.float32([
+            marker_centers[CORNER_TOP_LEFT_ID],     # Coin en haut a gauche
+            marker_centers[CORNER_TOP_RIGHT_ID],    # Coin en haut a droite
+            marker_centers[CORNER_BOTTOM_RIGHT_ID], # Coin en bas a droite
+            marker_centers[CORNER_BOTTOM_LEFT_ID]   # Coin en bas a gauche
+        ])
+    except KeyError:
+        return None  # Si un coin est manquant, retournez None
+
 def apply_perspective_transform(frame, user_corners, perspective_matrix=None, pixels_per_cm=None):
     """
     Apply a perspective transformation to correct the image view.
@@ -58,21 +70,24 @@ def apply_perspective_transform(frame, user_corners, perspective_matrix=None, pi
     # Compute scaled distances in pixels
     scaled_horizontal_distance = HORIZONTAL_DISTANCE_CM * pixels_per_cm * SCALE_FACTOR
     scaled_vertical_distance = VERTICAL_DISTANCE_CM * pixels_per_cm * SCALE_FACTOR
+    scaled_horizontal_margin = HORIZONTAL_MARGIN_CM * pixels_per_cm * SCALE_FACTOR
+    scaled_vertical_margin = VERTICAL_MARGIN_CM * pixels_per_cm * SCALE_FACTOR
 
     # Compute the perspective transformation matrix if not provided
     if perspective_matrix is None:
         final_corners = np.float32([
-            [0, 0],                                                     # Top-Left
-            [scaled_horizontal_distance, 0],                            # Top-Right
-            [scaled_horizontal_distance, scaled_vertical_distance],     # Bottom-Right
-            [0, scaled_vertical_distance]                               # Bottom-Left
+            [scaled_horizontal_margin, scaled_vertical_margin],                                                         # Top-Left
+            [scaled_horizontal_margin + scaled_horizontal_distance, scaled_vertical_margin],                            # Top-Right
+            [scaled_horizontal_margin + scaled_horizontal_distance, scaled_vertical_margin + scaled_vertical_distance], # Bottom-Right
+            [scaled_horizontal_margin, scaled_vertical_margin + scaled_vertical_distance]                               # Bottom-Left
         ])
         perspective_matrix = cv2.getPerspectiveTransform(user_corners, final_corners)
 
     # Apply the transformation
     warped_image = cv2.warpPerspective(
         frame, perspective_matrix,
-        (int(scaled_horizontal_distance), int(scaled_vertical_distance))
+        (int(scaled_horizontal_distance + 2 * scaled_horizontal_margin),
+        int(scaled_vertical_distance + 2 * scaled_vertical_margin))
     )
     
     return warped_image, perspective_matrix, pixels_per_cm
@@ -131,13 +146,13 @@ def process_markers(frame, marker_IDs, marker_corners):
 
 # ---------------------- MAIN PROGRAM ---------------------- #
 
-def calibrationAndTransform(frame):
+def calibrationAndTransform(frame, camNumber):
     """
     Main function to handle manual calibration and perspective transformation.
 
     Parameters:
         frame: Input camera frame
-        name: Window name for display
+        camNumber: number of camera for matrix
 
     Returns:
         Transformed frame, detected corners
@@ -151,9 +166,9 @@ def calibrationAndTransform(frame):
     # ---------------------- LOAD PERSPECTIVE MATRIX FROM FILE ---------------------- #
 
     try:
-        with open("src/perspective_matrix.txt", "r") as f:
+        with open("src/perspective_matrix_" + str(camNumber) + ".txt", "r") as f:
             lines = f.readlines()
-            print("Loading camera transformation data from perpective_matrix.txt...")
+            print("Loading camera " + str(camNumber) + " transformation data from perpective_matrix.txt...")
             
             # Read the first line as pixels per cm
             pixels_per_cm = float(lines[0].strip())
@@ -164,10 +179,10 @@ def calibrationAndTransform(frame):
             matrix_as_list = [float(x) for x in perspective_matrix_str.split()]
             perspective_matrix = np.float32(matrix_as_list).reshape(3, 3)
 
-            print("perpective_matrix.txt loaded")
+            print("perpective_matrix_" + str(camNumber) + ".txt loaded")
 
     except FileNotFoundError:
-        print("Perspective matrix file not found. Calibration required.")
+        print("Perspective matrix " + str(camNumber) + " file not found. Calibration required.")
         write_file = True  # File needs to be created
 
     # ---------------------- COMPUTE PRESPECTIVE MATRIX IF NOT LOADED ---------------------- #
@@ -182,6 +197,7 @@ def calibrationAndTransform(frame):
         centers = {id: marker_centers.get(id) for id in required_ids}
 
         if all(centers[id] is not None for id in required_ids):
+            marker_centers = sort_by_target_order(marker_centers)
             transformed_frame, perspective_matrix, pixels_per_cm, _ = apply_perspective_transform(frame, marker_centers)
         else:
             print("Error auto-calibration: could not find all corners")
@@ -199,8 +215,8 @@ def calibrationAndTransform(frame):
     # ---------------------- SAVE PERSPECTIVE MATRIX TO FILE ---------------------- #
 
     if write_file:
-        with open("src/perspective_matrix.txt", "w") as f:
+        with open("src/perspective_matrix_" + str(camNumber) + ".txt", "w") as f:
             f.write(str(pixels_per_cm) + "\n" + str(perspective_matrix))
-            print("Saved new perspective matrix into perpective_matrix.txt")
+            print("Saved new perspective matrix into perpective_matrix_" + str(camNumber) + ".txt")
 
     return transformed_frame

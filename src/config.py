@@ -10,6 +10,8 @@ CELL_SIZE = 0.05
 
 HORIZONTAL_DISTANCE_CM = 80     # Table horizontal distance between Aruco (from centers)
 VERTICAL_DISTANCE_CM = 180      # Table vertical distance between Aruco (from centers)
+HORIZONTAL_MARGIN_CM = 70       # Table horizontal margin around Aruco (from centers)
+VERTICAL_MARGIN_CM = 60         # Table vertical margin around Aruco (from centers)
 SCALE_FACTOR = 2
 
 CORNER_TOP_LEFT_ID = 22

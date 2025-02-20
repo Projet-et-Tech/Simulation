@@ -2,7 +2,7 @@ import math
 import cv2
 import numpy as np
 
-def convert_2D_to_3D(x, y, transformed_frame, TABLE_LENGTH, TABLE_WIDTH, CAM_POS, CUBE_HEIGHT, robot_start_position):
+def convert_2D_to_3D(x, y, transformed_frame, TABLE_LENGTH, TABLE_WIDTH, CAM_POS, CUBE_HEIGHT):
     """
     Converts 2D image coordinates to 3D real-world coordinates using perspective correction.
 
@@ -14,7 +14,6 @@ def convert_2D_to_3D(x, y, transformed_frame, TABLE_LENGTH, TABLE_WIDTH, CAM_POS
         TABLE_WIDTH (float): Width of the table in real-world units.
         CAM_POS (tuple): Camera position (x, y, z) in real-world coordinates.
         CUBE_HEIGHT (float): Assumed height of the detected object.
-        robot_start_position (tuple): Initial robot position (x, y, z).
 
     Returns:
         tuple: (x_true, y_true, z_true) - The corrected 3D coordinates.
@@ -57,8 +56,8 @@ def convert_2D_to_3D(x, y, transformed_frame, TABLE_LENGTH, TABLE_WIDTH, CAM_POS
     print(f"Angles (radians): theta = {theta:.2f}, phi = {phi:.2f}")
     print(f"Fake Detected Position in 3D: (x, y, z) = ({x_fake:.2f}, {y_fake:.2f}, {CUBE_HEIGHT:.2f})")
     print(f"True Detected Position in 3D: (x, y, z) = ({x_true:.2f}, {y_true:.2f}, {CUBE_HEIGHT:.2f})")
-    print(f"True Robot Position in 3D: (x, y, z) = ({robot_start_position[0]:.2f}, {robot_start_position[1]:.2f}, {robot_start_position[2]:.2f})")
-
+    print("")
+  
     return x_true, y_true
 
 
