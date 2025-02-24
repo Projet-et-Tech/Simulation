@@ -5,6 +5,7 @@ from cv2 import aruco
 from config import HORIZONTAL_DISTANCE_CM, VERTICAL_DISTANCE_CM, HORIZONTAL_MARGIN_CM, VERTICAL_MARGIN_CM, SCALE_FACTOR, CORNER_TOP_LEFT_ID, CORNER_TOP_RIGHT_ID, CORNER_BOTTOM_LEFT_ID, CORNER_BOTTOM_RIGHT_ID
 
 from utils.perspectiveCorrection import getCornersFromUserClick
+from utils.arucoDetection import highlightDetected
 
 # ---------------------- ARUCO MARKER SETUP ---------------------- #
 
@@ -146,7 +147,7 @@ def process_markers(frame, marker_IDs, marker_corners):
 
 # ---------------------- MAIN PROGRAM ---------------------- #
 
-def calibrationAndTransform(frame, camNumber):
+def calibrationAndTransform(frame, camNumber, enableManualCalibration=False):
     """
     Main function to handle manual calibration and perspective transformation.
 
@@ -187,7 +188,7 @@ def calibrationAndTransform(frame, camNumber):
 
     # ---------------------- COMPUTE PRESPECTIVE MATRIX IF NOT LOADED ---------------------- #
 
-    if perspective_matrix is None:
+    while perspective_matrix is None and not enableManualCalibration:
 
         marker_corners, marker_IDs = detect_aruco_markers(frame, aruco_detector)
         marker_centers = process_markers(frame, marker_IDs, marker_corners)
@@ -200,14 +201,19 @@ def calibrationAndTransform(frame, camNumber):
             marker_centers = sort_by_target_order(marker_centers)
             transformed_frame, perspective_matrix, pixels_per_cm, _ = apply_perspective_transform(frame, marker_centers)
         else:
-            print("Error auto-calibration: could not find all corners")
-            print("Switching to manual calibration")
+            highlighted_frame = highlightDetected(frame, {CORNER_TOP_LEFT_ID, CORNER_TOP_RIGHT_ID, CORNER_BOTTOM_RIGHT_ID, CORNER_BOTTOM_LEFT_ID})
 
-            # Get user-defined table corners for calibration
-            centers = getCornersFromUserClick(frame)
-            transformed_frame, perspective_matrix, pixels_per_cm = apply_perspective_transform(frame, centers)
+            cv2.namedWindow("Detected ArUco Markers", cv2.WINDOW_NORMAL)
+            cv2.imshow("Detected ArUco Markers", highlighted_frame)
 
-    else:
+    if perspective_matrix is None and enableManualCalibration:
+        print("Switched to manual calibration")
+
+        # Get user-defined table corners for calibration
+        centers = getCornersFromUserClick(frame)
+        transformed_frame, perspective_matrix, pixels_per_cm = apply_perspective_transform(frame, centers)
+
+    if perspective_matrix is not None:
         # Use the preloaded transformation matrix
         centers = None
         transformed_frame, _, _ = apply_perspective_transform(frame, centers, perspective_matrix, pixels_per_cm)

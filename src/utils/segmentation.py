@@ -66,7 +66,7 @@ def drawObstacles3D(object_corners, image, cam_position, line_color=(0, 1, 0)):
         for corner in corners:
             x_2d, y_2d = corner
             x_3d, y_3d = convert_2D_to_3D(
-                y_2d, x_2d, image, TABLE_LENGTH, TABLE_WIDTH, cam_position, PAMI_HEIGHT
+                y_2d, x_2d, image, cam_position, PAMI_HEIGHT
             )
             transformed_corners.append((x_3d, y_3d, PAMI_HEIGHT))  # Adding height dimension
 
