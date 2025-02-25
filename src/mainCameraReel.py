@@ -1,18 +1,19 @@
 import cv2
 import os
+import numpy as np
 
 from utils.imageTransform import calibrationAndTransform
 from utils.perspectiveCorrection import convert_2D_to_3D
-from utils.arucoDetection import detectMarkerByID
-from config import ROBOT_ID, CAM1_POS, PAMI_HEIGHT
+from utils.arucoDetection import highlightDetected
+from config import ROBOT_ID, CAM1_POS, PAMI_HEIGHT, PAMI_ID
 
 
 def main():
-    RTSP_URL = 'tcp://192.168.159.241:5001'
-    os.environ['OPENCV_FFMPEG_CAPTURE_OPTIONS'] = 'rtsp_transport;udp'
+    # RTSP_URL = 'tcp://192.168.159.241:5001'
+    # os.environ['OPENCV_FFMPEG_CAPTURE_OPTIONS'] = 'rtsp_transport;udp'
     # start stream first!
-    cap = cv2.VideoCapture(RTSP_URL, cv2.CAP_FFMPEG)
-    #cap = cv.VideoCapture(0, cv.CAP_V4L2)
+    # cap = cv2.VideoCapture(RTSP_URL, cv2.CAP_FFMPEG)
+    cap = cv2.VideoCapture(1)
 
     if not cap.isOpened():
         print("Cannot open camera")
@@ -25,22 +26,30 @@ def main():
 
     while True:
         ret, frame = cap.read()
+        # frame = cv2.flip(frame, 1)
         if not ret:
             break
 
         transformed_frame1 = calibrationAndTransform(frame, 1)
+        if np.array_equal(transformed_frame1, frame) or transformed_frame1 is None:
+            continue
+
+        # Highlight detected markers and get their centers
+        transformed_frame1, centers1 = highlightDetected(transformed_frame1, {ROBOT_ID, PAMI_ID})
+
+        # Display the transformed frame
         cv2.namedWindow("Table", cv2.WINDOW_NORMAL)
         cv2.imshow("Table", transformed_frame1)
+        cv2.waitKey(1)
 
-        # Vérifier si frame ou transformed_frame
-        detected_center = detectMarkerByID(transformed_frame1, ROBOT_ID)
-        if detected_center is not None:
-            print(f"Marker {ROBOT_ID} found at: {detected_center}")
-        else:
-            print(f"Marker {ROBOT_ID} not found in the frame.")
+        # Check if either ROBOT_ID or PAMI_ID is detected
+        for marker_id in [ROBOT_ID, PAMI_ID]:
+            if marker_id in centers1:
+                detected_center = centers1[marker_id]
 
-        true_center = convert_2D_to_3D(detected_center[0], detected_center[1], transformed_frame1, CAM1_POS, PAMI_HEIGHT)
-        print(f"true center : {true_center[0]}, {true_center[1]}, {true_center[2]}")
+                # Convert detected 2D position to 3D coordinates
+                true_center = convert_2D_to_3D(detected_center[0], detected_center[1], transformed_frame1, CAM1_POS, PAMI_HEIGHT)
+                print(f"True center of marker {marker_id}: {true_center[0]}, {true_center[1]}")
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break

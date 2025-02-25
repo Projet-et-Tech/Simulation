@@ -169,7 +169,7 @@ def calibrationAndTransform(frame, camNumber, enableManualCalibration=False):
     try:
         with open("src/perspective_matrix_" + str(camNumber) + ".txt", "r") as f:
             lines = f.readlines()
-            print("Loading camera " + str(camNumber) + " transformation data from perpective_matrix.txt...")
+            # print("Loading camera " + str(camNumber) + " transformation data from perpective_matrix.txt...")
             
             # Read the first line as pixels per cm
             pixels_per_cm = float(lines[0].strip())
@@ -180,17 +180,27 @@ def calibrationAndTransform(frame, camNumber, enableManualCalibration=False):
             matrix_as_list = [float(x) for x in perspective_matrix_str.split()]
             perspective_matrix = np.float32(matrix_as_list).reshape(3, 3)
 
-            print("perpective_matrix_" + str(camNumber) + ".txt loaded")
+            # print("perpective_matrix_" + str(camNumber) + ".txt loaded")
 
     except FileNotFoundError:
-        print("Perspective matrix " + str(camNumber) + " file not found. Calibration required.")
+        # print("Perspective matrix " + str(camNumber) + " file not found. Calibration required.")
         write_file = True  # File needs to be created
 
     # ---------------------- COMPUTE PRESPECTIVE MATRIX IF NOT LOADED ---------------------- #
 
-    while perspective_matrix is None and not enableManualCalibration:
+    if perspective_matrix is None and not enableManualCalibration:
 
         marker_corners, marker_IDs = detect_aruco_markers(frame, aruco_detector)
+
+        # Always display the frame, even if no markers are detected
+        cv2.namedWindow("Detected ArUco Markers", cv2.WINDOW_NORMAL)
+        cv2.imshow("Detected ArUco Markers", frame)
+        cv2.waitKey(1)  # Small delay to allow OpenCV to update the window
+
+        if marker_IDs is None or len(marker_IDs) == 0:
+            # print("No markers found, retrying...")
+            return None  # Skip iteration if no markers are found
+
         marker_centers = process_markers(frame, marker_IDs, marker_corners)
 
         # If all corners are detected
@@ -199,15 +209,17 @@ def calibrationAndTransform(frame, camNumber, enableManualCalibration=False):
 
         if all(centers[id] is not None for id in required_ids):
             marker_centers = sort_by_target_order(marker_centers)
-            transformed_frame, perspective_matrix, pixels_per_cm, _ = apply_perspective_transform(frame, marker_centers)
+            transformed_frame, perspective_matrix, pixels_per_cm = apply_perspective_transform(frame, marker_centers)
+            cv2.destroyWindow("Detected ArUco Markers")
         else:
-            highlighted_frame = highlightDetected(frame, {CORNER_TOP_LEFT_ID, CORNER_TOP_RIGHT_ID, CORNER_BOTTOM_RIGHT_ID, CORNER_BOTTOM_LEFT_ID})
+            highlighted_frame, _ = highlightDetected(frame, {CORNER_TOP_LEFT_ID, CORNER_TOP_RIGHT_ID, CORNER_BOTTOM_RIGHT_ID, CORNER_BOTTOM_LEFT_ID})
 
-            cv2.namedWindow("Detected ArUco Markers", cv2.WINDOW_NORMAL)
             cv2.imshow("Detected ArUco Markers", highlighted_frame)
+            cv2.waitKey(1)
+            return frame
 
     if perspective_matrix is None and enableManualCalibration:
-        print("Switched to manual calibration")
+        # print("Switched to manual calibration")
 
         # Get user-defined table corners for calibration
         centers = getCornersFromUserClick(frame)
@@ -220,9 +232,9 @@ def calibrationAndTransform(frame, camNumber, enableManualCalibration=False):
 
     # ---------------------- SAVE PERSPECTIVE MATRIX TO FILE ---------------------- #
 
-    if write_file:
+    if write_file and perspective_matrix is not None:
         with open("src/perspective_matrix_" + str(camNumber) + ".txt", "w") as f:
             f.write(str(pixels_per_cm) + "\n" + str(perspective_matrix))
-            print("Saved new perspective matrix into perpective_matrix_" + str(camNumber) + ".txt")
+            # print("Saved new perspective matrix into perpective_matrix_" + str(camNumber) + ".txt")
 
     return transformed_frame
