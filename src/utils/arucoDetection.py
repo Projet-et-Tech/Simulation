@@ -19,9 +19,30 @@ def highlightDetected(frame, allowed_ids):
     # Load the predefined ArUco dictionary
     aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)  # Adjust dictionary if needed
     parameters = cv2.aruco.DetectorParameters()
+
+    # Paramètres de détection optimisés
+    parameters = cv2.aruco.DetectorParameters()
+
+    parameters.adaptiveThreshWinSizeMin = 3  # Réduit la taille de la fenêtre adaptative
+    parameters.adaptiveThreshWinSizeMax = 23  # Augmente la taille max pour mieux capturer les marqueurs
+    parameters.adaptiveThreshWinSizeStep = 10  # Ajuste l'incrémentation entre min et max
+    parameters.adaptiveThreshConstant = 7  # Ajuste le seuil adaptatif
+
+    parameters.minMarkerPerimeterRate = 0.03  # Ajuste la taille min du marqueur
+    parameters.maxMarkerPerimeterRate = 4.0  # Ajuste la taille max du marqueur
+    parameters.polygonalApproxAccuracyRate = 0.02  # Rend les contours plus précis
+    parameters.minCornerDistanceRate = 0.05  # Évite la détection de marqueurs trop proches
+
+    parameters.minOtsuStdDev = 5.0  # Améliore le seuil Otsu pour des conditions de lumière variables
+    parameters.errorCorrectionRate = 0.6  # Augmente la tolérance aux erreurs du marqueur
+
     aruco_detector = cv2.aruco.ArucoDetector(aruco_dict, parameters)
 
     # Detect ArUco markers in the frame
+    
+    # Prétraitement de l'image
+    gray = cv2.GaussianBlur(gray, (5, 5), 0)  # Réduction du bruit
+    gray = cv2.equalizeHist(gray)  # Amélioration du contraste
     corners, ids, _ = aruco_detector.detectMarkers(gray)
 
     centers = {}  # Dictionary to store marker centers
