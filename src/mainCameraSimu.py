@@ -1,15 +1,18 @@
 import pybullet as p
 import cv2
 import time
+import numpy as np
 
 import config as config
 from simulation.pybullet_manager import PyBulletManager
-from config import ROBOT_START_POS, DEBUG, CAM1_POS, CAM1_ORIENTATION_DEG, CAM2_POS, CAM2_ORIENTATION_DEG
+from config import ROBOT_START_POS, DEBUG, CAM1_POS, CAM1_ORIENTATION_DEG, CAM2_POS, CAM2_ORIENTATION_DEG, CAN_ID, PLANK_COLOR_BOUNDS
 from simulation.setup import load_objects, create_environment
 
 from utils.virtualCamera import init_camera, read_camera
 from utils.imageTransform import calibrationAndTransform
 from utils.segmentation import colorSegmentation, drawObstacles3D
+from utils.arucoDetection import highlightDetected
+
 
 # ------------------ GLOBAL VARIABLES ------------------
 
@@ -55,24 +58,33 @@ robot_id = pybullet_manager.load_urdf("src/urdf_models/robot_pami.urdf", ROBOT_S
 cam1 = init_camera(CAM1_POS, CAM1_ORIENTATION_DEG)
 cam2 = init_camera(CAM2_POS, CAM2_ORIENTATION_DEG)
 
-time.sleep(2)   # wait for PAMI to fall before taking picture (temp, not in video)
+time.sleep(5)   # wait for PAMI to fall before taking picture (temp, not in video)
 rgb_img1 = read_camera(cam1)
 rgb_img2 = read_camera(cam2)
 
-# cv2.namedWindow("cam view", cv2.WINDOW_NORMAL)
-# cv2.imshow("cam view", rgb_img1)
+cv2.namedWindow("cam view", cv2.WINDOW_NORMAL)
+cv2.imshow("cam view", rgb_img1)
 
 transformed_frame1 = calibrationAndTransform(rgb_img1, 1, True)
 transformed_frame2 = calibrationAndTransform(rgb_img2, 2, True)
 
 # ------------------ SEGMENTATION PAR COULEUR ------------------
 
-object_corners = colorSegmentation(transformed_frame1)
+object_corners = colorSegmentation(transformed_frame1, PLANK_COLOR_BOUNDS)
 drawObstacles3D(object_corners, transformed_frame1, CAM1_POS)
 
-object_corners = colorSegmentation(transformed_frame2, (0, 255, 255))
+object_corners = colorSegmentation(transformed_frame2, PLANK_COLOR_BOUNDS, (0, 255, 255))
 drawObstacles3D(object_corners, transformed_frame2, CAM2_POS, (1, 1, 0))
 
+# ------------------------ CAN DETECTION ------------------------
+
+highlighted_frame, _ = highlightDetected(rgb_img1, {CAN_ID})
+cv2.namedWindow("Highlighted Frame", cv2.WINDOW_NORMAL)
+cv2.imshow("Highlighted Frame", highlighted_frame)
+
+# essayer color detection blanc voisin de vert jaune rouge (couleurs étiquettes)
+
+# ---------------------------- BAZAR ----------------------------
 # essayer refaire perpective matrix
 
 # Print converted 3D corners

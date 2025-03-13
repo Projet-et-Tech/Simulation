@@ -1,3 +1,5 @@
+import numpy as np
+
 # -------- TABLE -------- #
 
 TABLE_HEIGHT = 0.1
@@ -46,6 +48,7 @@ DEBUG = False
 
 # -------- OBSTACLES -------- #
 
+CAN_ID = 47
 CAN_POSITIONS = [
     # De gauche a droite de haut en bas
     # Moitie gauche
@@ -92,6 +95,7 @@ CAN_POSITIONS = [
     [0.25, -0.05, 0.1],
 ]
 
+PLANK_COLOR_BOUNDS = {"planche": (np.array([10, 100, 20]), np.array([20, 255, 200]))}
 PLANK_POSITIONS_HORIZONTAL = [
     # De gauche a droite de haut en bas
     # Moitie gauche
@@ -109,7 +113,6 @@ PLANK_POSITIONS_HORIZONTAL = [
     [0.4, -0.05, 0.15],
     [0.4, -0.05, 0.2],
 ]
-
 PLANK_POSITIONS_VERTICAL = [
     # De gauche a droite de haut en bas
     # Moitie gauche

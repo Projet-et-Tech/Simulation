@@ -9,7 +9,7 @@
         <mesh filename="conserve.obj"/>  <!-- Path to the .obj file -->
       </geometry>
       <material name="default_material">
-        <color rgba="0.6 0.6 0.6 1"/>  <!-- You can set the default color if no texture is available -->
+        <color rgba="1 1 1 1"/>  <!-- You can set the default color if no texture is available -->
       </material>
     </visual>
     

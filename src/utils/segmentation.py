@@ -5,18 +5,13 @@ import numpy as np
 from utils.perspectiveCorrection import convert_2D_to_3D
 from config import TABLE_LENGTH, TABLE_WIDTH, PAMI_HEIGHT
 
-def colorSegmentation(image, contour_color=(0, 255, 0), corner_color=(0, 0, 255)):
+def colorSegmentation(image, color_bounds, contour_color=(0, 255, 0), corner_color=(0, 0, 255)):
     def segment_color(image, lower_bound, upper_bound):
         hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         mask = cv2.inRange(hsv, lower_bound, upper_bound)
         kernel = np.ones((16, 16), np.uint8)
         mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)  # Suppression du bruit
         return mask
-    
-    # Définition des plages de couleurs (en HSV)
-    color_bounds = {
-        "planche": (np.array([10, 100, 20]), np.array([20, 255, 200]))
-    }
     
     masks = {color: segment_color(image, bounds[0], bounds[1]) for color, bounds in color_bounds.items()}
 
