@@ -31,7 +31,8 @@ ROBOT_ID = 2
 
 # -------- PAMI -------- #
 
-PAMI_HEIGHT = 0.1
+PAMI_HEIGHT = 0.025
+
 PAMI_ID = 6
 
 # -------- CAMERA -------- #

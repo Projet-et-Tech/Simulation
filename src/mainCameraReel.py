@@ -9,11 +9,11 @@ from config import ROBOT_ID, CAM1_POS, PAMI_HEIGHT, PAMI_ID
 
 
 def main():
-    # RTSP_URL = 'tcp://192.168.159.241:5001'
-    # os.environ['OPENCV_FFMPEG_CAPTURE_OPTIONS'] = 'rtsp_transport;udp'
+    RTSP_URL = 'tcp://192.168.11.241:5001'
+    os.environ['OPENCV_FFMPEG_CAPTURE_OPTIONS'] = 'rtsp_transport;udp'
     # start stream first!
-    # cap = cv2.VideoCapture(RTSP_URL, cv2.CAP_FFMPEG)
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(RTSP_URL, cv2.CAP_FFMPEG)
+    # cap = cv2.VideoCapture(1)
 
     if not cap.isOpened():
         print("Cannot open camera")
@@ -49,7 +49,7 @@ def main():
 
                 # Convert detected 2D position to 3D coordinates
                 true_center = convert_2D_to_3D(detected_center[0], detected_center[1], transformed_frame1, CAM1_POS, PAMI_HEIGHT)
-                print(f"True center of marker {marker_id}: {true_center[0]}, {true_center[1]}")
+                #print(f"True center of marker {marker_id}: {true_center[0]}, {true_center[1]}")
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break

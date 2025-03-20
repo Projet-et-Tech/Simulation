@@ -40,24 +40,24 @@ def convert_2D_to_3D(x, y, transformed_frame, CAM_POS, CUBE_HEIGHT):
     x_correction = phi * (CUBE_HEIGHT / CAM_POS[2]) * CAM_POS[0]
     y_correction = theta * (CUBE_HEIGHT / CAM_POS[2]) * CAM_POS[1]
 
-    x_true = x_fake + x_correction
-    y_true = y_fake + y_correction
+    x_true = x_fake + x_correction + 0.37
+    y_true = y_fake + y_correction - 0.37
 
     # ------------------ FINAL ADJUSTMENTS ------------------
 
-    if x_true <= 0.5:
-        x_true += (x_true - 0.5) * (0.11 / (-1 - 0.5))  # Linear adjustment for x ≤ 0.5
-    else:
-        x_true -= 0.01  # Slight correction for x > 0.5
+    #if x_true <= 0.5:
+     #   x_true -= (x_true - 0.5) * (0.11 / (-1 - 0.5))  # Linear adjustment for x ≤ 0.5
+    #else:
+     #   x_true -= 0.01  # Slight correction for x > 0.5
 
-    y_true -= y_true * 0.11  # Apply correction on y
+    y_true += y_true * 0.11  # Apply correction on y
 
     # ------------------ DEBUG OUTPUTS ------------------
 
-    # print(f"Angles (radians): theta = {theta:.2f}, phi = {phi:.2f}")
-    # print(f"Fake Detected Position in 3D: (x, y, z) = ({x_fake:.2f}, {y_fake:.2f}, {CUBE_HEIGHT:.2f})")
-    # print(f"True Detected Position in 3D: (x, y, z) = ({x_true:.2f}, {y_true:.2f}, {CUBE_HEIGHT:.2f})")
-    # print("")
+    print(f"Angles (radians): theta = {theta:.2f}, phi = {phi:.2f}")
+    print(f"Fake Detected Position in 3D: (x, y, z) = ({x_fake:.2f}, {y_fake:.2f})")
+    print(f"True Detected Position in 3D: (x, y, z) = ({x_true:.2f}, {y_true:.2f})")
+    print("")
   
     return x_true, y_true
 
