@@ -1,3 +1,9 @@
+"""
+Module utilitaire pour la correction de perspective et la conversion des coordonnées 2D (image) en coordonnées 3D (réelles).
+Permet de transformer un clic utilisateur ou une détection sur l'image en position réelle sur la table, en tenant compte de la position de la caméra et de la hauteur de l'objet.
+Inclut aussi une fonction pour sélectionner manuellement les coins de la table sur une image.
+"""
+
 import math
 import cv2
 import numpy as np
@@ -6,17 +12,18 @@ from config import TABLE_LENGTH, TABLE_WIDTH
 
 def convert_2D_to_3D(x, y, transformed_frame, CAM_POS, CUBE_HEIGHT):
     """
-    Converts 2D image coordinates to 3D real-world coordinates using perspective correction.
+    Convertit des coordonnées 2D (image) en coordonnées 3D réelles par correction de perspective.
+    Utilisé pour obtenir la position réelle sur la table à partir d'un clic ou d'une détection sur l'image.
 
-    Parameters:
-        x (float): X-coordinate of the clicked point in the image.
-        y (float): Y-coordinate of the clicked point in the image.
-        transformed_frame (numpy.ndarray): The transformed image/frame.
-        CAM_POS (tuple): Camera position (x, y, z) in real-world coordinates.
-        CUBE_HEIGHT (float): Assumed height of the detected object.
+    Args:
+        x (float): Coordonnée X du point cliqué dans l'image.
+        y (float): Coordonnée Y du point cliqué dans l'image.
+        transformed_frame (numpy.ndarray): Image transformée (vue corrigée).
+        CAM_POS (tuple): Position de la caméra (x, y, z) dans le monde réel.
+        CUBE_HEIGHT (float): Hauteur de l'objet détecté.
 
     Returns:
-        tuple: (x_true, y_true, z_true) - The corrected 3D coordinates.
+        tuple: (x_true, y_true) - Coordonnées corrigées en 3D.
     """
 
     # ------------------ IMAGE DIMENSIONS ------------------
@@ -40,6 +47,7 @@ def convert_2D_to_3D(x, y, transformed_frame, CAM_POS, CUBE_HEIGHT):
     x_correction = phi * (CUBE_HEIGHT / CAM_POS[2]) * CAM_POS[0]
     y_correction = theta * (CUBE_HEIGHT / CAM_POS[2]) * CAM_POS[1]
 
+    # Calcul des coordonnées corrigées (ajustements empiriques)
     x_true = x_fake + x_correction + 0.37
     y_true = y_fake + y_correction - 0.37
 
@@ -61,51 +69,38 @@ def convert_2D_to_3D(x, y, transformed_frame, CAM_POS, CUBE_HEIGHT):
   
     return x_true, y_true
 
-
 def getCornersFromUserClick(frame):
     """
-    Allows the user to manually select four corner points by clicking on an image.
-    
-    Parameters:
-        frame (numpy.ndarray): The image or frame where the user will click points.
+    Permet à l'utilisateur de sélectionner manuellement quatre coins sur une image par clic souris.
+    Utilisé pour la calibration manuelle de la perspective.
+
+    Args:
+        frame (numpy.ndarray): Image sur laquelle l'utilisateur va cliquer.
 
     Returns:
-        numpy.ndarray: A list of four (x, y) coordinate pairs representing the selected points.
+        numpy.ndarray: Tableau de quatre coordonnées (x, y) sélectionnées.
     """
-
-    # Create a copy of the frame to keep the original unmodified
+    # Copie de l'image pour affichage interactif
     frame_copy = frame.copy()
-
-    # List to store selected coordinates
-    coords = []
+    coords = []  # Liste des coordonnées sélectionnées
 
     def click_event(event, x, y, flags, param):
         """
-        Mouse click event handler. Captures coordinates when the user clicks on the image.
-        
-        Parameters:
-            event: The OpenCV mouse event type.
-            x, y: Coordinates of the mouse click.
-            flags: Any special flags (not used here).
-            param: Additional parameters (not used here).
+        Callback souris pour capturer les clics de l'utilisateur.
+        Ajoute un point vert sur l'image à chaque clic et stocke la coordonnée.
+        Ferme la fenêtre après 4 points.
         """
-        if event == cv2.EVENT_LBUTTONDOWN:  # Left mouse button click
-            coords.append((x, y))  # Store clicked coordinates
-            cv2.circle(frame_copy, (x, y), 5, (0, 255, 0), -1)  # Draw a green dot at the clicked location
-            cv2.imshow('Manual Calibration', frame_copy)  # Update the display
-
-            # If 4 points are selected, print them and close the window
+        if event == cv2.EVENT_LBUTTONDOWN:
+            coords.append((x, y))
+            cv2.circle(frame_copy, (x, y), 5, (0, 255, 0), -1)
+            cv2.imshow('Manual Calibration', frame_copy)
             if len(coords) == 4:
                 cv2.destroyAllWindows()
 
-    # Display the copied image for user interaction
+    # Affichage de l'image et activation du callback souris
     cv2.imshow('Manual Calibration', frame_copy)
-    
-    # Set the mouse callback function to capture clicks
     cv2.setMouseCallback('Manual Calibration', click_event)
+    cv2.waitKey(0)  # Attend que l'utilisateur ait cliqué 4 fois
 
-    # Wait indefinitely until a key is pressed (ensures user has time to click)
-    cv2.waitKey(0)
-
-    # Convert coordinates to a NumPy array of type float32 for further processing
+    # Retourne les coordonnées sélectionnées sous forme de tableau float32
     return np.float32(coords)

@@ -1,3 +1,10 @@
+"""
+Script principal pour la simulation de la détection caméra dans PyBullet.
+Permet de simuler la capture d'images depuis des caméras virtuelles, la détection d'obstacles par couleur,
+la détection de marqueurs ArUco, et la projection des obstacles en 3D.
+Inclut la possibilité de cliquer sur l'image pour obtenir des coordonnées, et des outils de calibration et de visualisation.
+"""
+
 import pybullet as p
 import cv2
 import time
@@ -21,31 +28,31 @@ clicked_point= None
 # ------------------ MOUSE CLICK CALLBACK ------------------ (temp, will be auto detection by aruco on PAMIs)
 
 def mouse_callback(event, x, y, flags, param):
-    """Captures the user's click position on the image."""
+    """
+    Callback souris temporaire pour capturer la position d'un clic sur l'image.
+    Ferme la fenêtre après le clic.
+    """
     global clicked_point
     if event == cv2.EVENT_LBUTTONDOWN:
         clicked_point = (x, y)
         print(f"Clicked at: {clicked_point}")
-        cv2.destroyAllWindows()  # Close the window after clicking
+        cv2.destroyAllWindows()  # Ferme la fenêtre après le clic
 
 # ------------------ PYBULLET SIMULATION SETUP ------------------
 
 debug = DEBUG
 
-# Initialize PyBullet with PyBulletManager
+# Initialisation de PyBullet et de la caméra de debug
 pybullet_manager = PyBulletManager(debug=debug)
 pybullet_manager.reset_camera(distance=2.0, yaw=0, pitch=-45, target=[0, 0, 0])
 pybullet_manager.set_real_time_simulation(True)
 
-# Create environment (ground and table)
+# Création de l'environnement (sol et table)
 plane_id, table_id = create_environment(pybullet_manager)
 
 # ------------------ LOAD OBSTACLES ------------------
-
-# Charger les conserves
+# Chargement des conserves et planches dans la simulation
 can_ids = load_objects(pybullet_manager, "src/urdf_models/conserve.urdf", [0.7071, 0, 0, 0.7071], config.CAN_POSITIONS)
-
-# Charger les planches
 plank_horizontal_ids = load_objects(pybullet_manager, "src/urdf_models/planche.urdf", [0.7071, 0, 0, 0.7071], config.PLANK_POSITIONS_HORIZONTAL)
 plank_vertical_ids = load_objects(pybullet_manager, "src/urdf_models/planche.urdf", [0.5, 0.5, 0.5, 0.5], config.PLANK_POSITIONS_VERTICAL)
 
@@ -54,22 +61,24 @@ plank_vertical_ids = load_objects(pybullet_manager, "src/urdf_models/planche.urd
 robot_id = pybullet_manager.load_urdf("src/urdf_models/robot_pami.urdf", ROBOT_START_POS, [0, 0, 0, 1])
 
 # ------------------ CAMERA CAPTURE & OBJECT DETECTION ------------------
-
+# Initialisation des caméras virtuelles
 cam1 = init_camera(CAM1_POS, CAM1_ORIENTATION_DEG)
 cam2 = init_camera(CAM2_POS, CAM2_ORIENTATION_DEG)
 
-time.sleep(5)   # wait for PAMI to fall before taking picture (temp, not in video)
+time.sleep(5)   # Attendre que le robot tombe sur la table avant la capture (temporaire)
 rgb_img1 = read_camera(cam1)
 rgb_img2 = read_camera(cam2)
 
+# Affichage de la vue caméra 1
 cv2.namedWindow("cam view", cv2.WINDOW_NORMAL)
 cv2.imshow("cam view", rgb_img1)
 
+# Calibration et correction de perspective sur les images capturées
 transformed_frame1 = calibrationAndTransform(rgb_img1, 1, True)
 transformed_frame2 = calibrationAndTransform(rgb_img2, 2, True)
 
 # ------------------ SEGMENTATION PAR COULEUR ------------------
-
+# Détection des planches par couleur et projection 3D
 object_corners = colorSegmentation(transformed_frame1, PLANK_COLOR_BOUNDS)
 drawObstacles3D(object_corners, transformed_frame1, CAM1_POS)
 
@@ -77,7 +86,7 @@ object_corners = colorSegmentation(transformed_frame2, PLANK_COLOR_BOUNDS, (0, 2
 drawObstacles3D(object_corners, transformed_frame2, CAM2_POS, (1, 1, 0))
 
 # ------------------------ CAN DETECTION ------------------------
-
+# Détection et surlignage d'une conserve spécifique par son ID
 highlighted_frame, _ = highlightDetected(rgb_img1, {CAN_ID})
 cv2.namedWindow("Highlighted Frame", cv2.WINDOW_NORMAL)
 cv2.imshow("Highlighted Frame", highlighted_frame)

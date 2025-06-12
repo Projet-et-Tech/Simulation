@@ -1,3 +1,9 @@
+"""
+Script principal pour la détection en temps réel des marqueurs ArUco sur une caméra réelle (webcam ou flux RTSP).
+Affiche les marqueurs détectés, dessine une croix orientée sur le robot, calcule l'angle et la distance vers une cible, et permet la conversion 2D->3D.
+Utilisé pour la calibration et la localisation du robot et de la cible sur la table réelle.
+"""
+
 import cv2
 import os
 import numpy as np
@@ -8,6 +14,13 @@ from utils.arucoDetection import highlightDetected, drawCross, getDirectionAndDi
 from config import ROBOT_ID, CAM1_POS, PAMI_HEIGHT, PAMI_ID, TABLE_WIDTH
 
 def main():
+    """
+    Boucle principale de capture vidéo :
+    - Capture une image depuis la caméra.
+    - Détecte les marqueurs ArUco du robot et de la cible.
+    - Dessine les croix et lignes, affiche les résultats et calcule les angles/distances.
+    - Quitte la boucle sur 'q'.
+    """
     # RTSP_URL = 'tcp://172.20.10.2:5001'
     # os.environ['OPENCV_FFMPEG_CAPTURE_OPTIONS'] = 'rtsp_transport;udp'
     # start stream first!
@@ -26,34 +39,35 @@ def main():
 
     while True:
         ret, frame = cap.read()
-        # frame = cv2.flip(frame, 1)
+        # frame = cv2.flip(frame, 1)  # Inverser horizontalement si besoin
         if not ret:
             break
 
+        # Détection et annotation des marqueurs robot et cible
         frame, _, _ = highlightDetected(frame, {ROBOT_ID, PAMI_ID})
         _, centerROBOT, cornersROBOT = highlightDetected(frame, {ROBOT_ID})
         _, centerPAMI, _ = highlightDetected(frame, {PAMI_ID})
 
 
         if centerROBOT:
-            # Extract the center coordinates
-            centerROBOT = tuple(list(centerROBOT.values())[0])  # Assuming only one center is detected
+            # Récupère le centre du robot (suppose un seul détecté)
+            centerROBOT = tuple(list(centerROBOT.values())[0])
 
-            # Convert corners to a NumPy array
+            # Convertit les coins en tableau numpy
             cornersROBOT = np.array(cornersROBOT[0][0], dtype=np.int32)
-
-            # print("-----------")
-            # print(cornersROBOT, cornersROBOT[0], cornersROBOT[0][0])
 
             drawCross(frame, centerROBOT, cornersROBOT)
 
             if centerPAMI:
-                centerPAMI = tuple(list(centerPAMI.values())[0])  # Assuming only one center is detected
+                centerPAMI = tuple(list(centerPAMI.values())[0])  # Centre de la cible
 
-                angle, distance, direction = getDirectionAndDistance(centerROBOT, cornersROBOT, centerPAMI, frame.shape[0], frame.shape[1], meters_per_pixel=TABLE_WIDTH / frame.shape[1]) 
+                # Calcule angle, distance, direction entre robot et cible
+                angle, distance, direction = getDirectionAndDistance(
+                    centerROBOT, cornersROBOT, centerPAMI, frame.shape[0], frame.shape[1], meters_per_pixel=TABLE_WIDTH / frame.shape[1]
+                )
                 print(f"Angle: {angle:.2f}°, Distance: {distance:.2f}m, Direction: {direction}")
 
-                # Draw blue line between centers
+                # Trace une ligne bleue entre robot et cible
                 cv2.line(frame, centerROBOT, centerPAMI, (255, 0, 0), 2)
 
         cv2.imshow("Highlighted", frame)
@@ -81,6 +95,7 @@ def main():
         #         true_center = convert_2D_to_3D(detected_center[0], detected_center[1], transformed_frame1, CAM1_POS, PAMI_HEIGHT)
         #         print(f"True center of marker {marker_id}: {true_center[0]}, {true_center[1]}")
 
+        # Quitte la boucle si 'q' est pressé
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
