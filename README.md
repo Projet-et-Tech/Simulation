@@ -7,51 +7,9 @@ La simulation a pour vocation de mettre en place des routines ou tests, en paral
 
 ## L'application
 
-### Get started
 Actuellement la branche d'avancement la plus récente est `update/image`.
-
-#### Linux
-1. Cloner le repository
-
-```bash
-git clone git@github.com:Projet-et-Tech/Simulation.git
-```
-
-2. Créer un environnement virtuel avec les dépendances installées :
-
-```bash
-make environment
-```
-
-3. Activer l'environnement virtuel :
-
-```bash
-source .venv/bin/activate
-```
-
-4. Installer les dépendances :
-
-```bash
-make install
-```
-
-5. Exécuter le programme main refactorisé (anciennement P&T.py) :
-
-```bash
-make run
-```
-
-6. Exécuter le programme simulation non refactorisé (anciennement PythonApplication2.py) :
-
-```bash
-make runSimu
-```
-
-7. Exécuter le programme caméra non refactorisé (anciennement mainCamera.py) :
-
-```bash
-make runCamera
-```
+Elle contient une simulation de la table de jeu, des obstacles, du robot et de la grille de pathfinding. Le robot est capable de se déplacer sur la table en évitant les obstacles et en suivant le chemin optimal calculé par l'algorithme A*.
+Elle contient également la simulation de la détection caméra et de la calibration par Aruco dans l'environnement de simulation. Le code est très similaire à celui utilisé en conditions réelles, et permet de tester les algorithmes de vision sans avoir besoin de matériel.
 
 ## Organisation du code
 
