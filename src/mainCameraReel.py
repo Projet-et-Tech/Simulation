@@ -21,11 +21,13 @@ def main():
     - Dessine les croix et lignes, affiche les résultats et calcule les angles/distances.
     - Quitte la boucle sur 'q'.
     """
+    # Caméra sans fils (Raspberry Pi en lien RTSP)
     # RTSP_URL = 'tcp://172.20.10.2:5001'
     # os.environ['OPENCV_FFMPEG_CAPTURE_OPTIONS'] = 'rtsp_transport;udp'
     # start stream first!
     # cap = cv2.VideoCapture(RTSP_URL, cv2.CAP_FFMPEG)
 
+    # Caméra locale (webcam)
     cap = cv2.VideoCapture(0)
 
     if not cap.isOpened():

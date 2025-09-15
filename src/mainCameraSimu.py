@@ -86,12 +86,10 @@ object_corners = colorSegmentation(transformed_frame2, PLANK_COLOR_BOUNDS, (0, 2
 drawObstacles3D(object_corners, transformed_frame2, CAM2_POS, (1, 1, 0))
 
 # ------------------------ CAN DETECTION ------------------------
-# Détection et surlignage d'une conserve spécifique par son ID
-highlighted_frame, _ = highlightDetected(rgb_img1, {CAN_ID})
-cv2.namedWindow("Highlighted Frame", cv2.WINDOW_NORMAL)
-cv2.imshow("Highlighted Frame", highlighted_frame)
-
-# essayer color detection blanc voisin de vert jaune rouge (couleurs étiquettes)
+# # Détection et surlignage d'une conserve spécifique par son ID
+# highlighted_frame, _ = highlightDetected(rgb_img1, {CAN_ID})
+# cv2.namedWindow("Highlighted Frame", cv2.WINDOW_NORMAL)
+# cv2.imshow("Highlighted Frame", highlighted_frame)
 
 # ---------------------------- BAZAR ----------------------------
 # essayer refaire perpective matrix
