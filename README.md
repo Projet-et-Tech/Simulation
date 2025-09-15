@@ -8,7 +8,7 @@ La simulation a pour vocation de mettre en place des routines ou tests, en paral
 ## L'application
 
 ### Get started
-
+Actuellement la branche d'avancement la plus récente est `update/image`.
 
 #### Linux
 1. Cloner le repository
