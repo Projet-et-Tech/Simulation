@@ -69,7 +69,7 @@ def convert_2D_to_3D(x, y, transformed_frame, CAM_POS, CUBE_HEIGHT):
   
     return x_true, y_true
 
-def getCornersFromUserClick(frame):
+def getCornersFromUserClickold(frame):
     """
     Permet à l'utilisateur de sélectionner manuellement quatre coins sur une image par clic souris.
     Utilisé pour la calibration manuelle de la perspective.
@@ -100,7 +100,42 @@ def getCornersFromUserClick(frame):
     # Affichage de l'image et activation du callback souris
     cv2.imshow('Manual Calibration', frame_copy)
     cv2.setMouseCallback('Manual Calibration', click_event)
-    cv2.waitKey(0)  # Attend que l'utilisateur ait cliqué 4 fois
+    
+    cv2.waitKey(0) | len(coords) == 4
 
     # Retourne les coordonnées sélectionnées sous forme de tableau float32
+    print("User-selected corners:", coords)
+    return np.float32(coords)
+
+def getCornersFromUserClick(frame):
+    frame_copy = frame.copy()
+    coords = []
+
+    def click_event(event, x, y, flags, param):
+        if event == cv2.EVENT_LBUTTONDOWN:
+            if len(coords) < 4:  # Limit to 4 points
+                coords.append((x, y))
+                cv2.circle(frame_copy, (x, y), 5, (0, 255, 0), -1)
+                cv2.imshow('Manual Calibration', frame_copy)
+                if len(coords) == 4:
+                    cv2.putText(frame_copy, "4 points selected!", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+                    cv2.imshow('Manual Calibration', frame_copy)
+                    cv2.waitKey(2000)  # Show message for 2 seconds
+                    # Close the manual Calib window only
+                    # cv2.destroyAllWindows() destroys all windows, not just the manual calib one
+                    cv2.destroyWindow('Manual Calibration')
+
+    cv2.imshow('Manual Calibration', frame_copy)
+    cv2.setMouseCallback('Manual Calibration', click_event)
+
+    while len(coords) < 4:
+        print(f"Points selected: {len(coords)}/4. Press 'Esc' to cancel.", end='\r')
+        if cv2.waitKey(1) & 0xFF == 27:
+            break
+
+    if len(coords) < 4:
+        print("Operation cancelled or not enough points selected.")
+        return None
+
+    print("User-selected corners:", coords)
     return np.float32(coords)

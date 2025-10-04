@@ -10,7 +10,7 @@ import cv2
 import time
 import numpy as np
 
-import config as config
+import config
 from simulation.pybullet_manager import PyBulletManager
 from config import ROBOT_START_POS, DEBUG, CAM1_POS, CAM1_ORIENTATION_DEG, CAM2_POS, CAM2_ORIENTATION_DEG, CAN_ID, PLANK_COLOR_BOUNDS
 from simulation.setup import load_objects, create_environment
@@ -65,7 +65,7 @@ robot_id = pybullet_manager.load_urdf("src/urdf_models/robot_pami.urdf", ROBOT_S
 cam1 = init_camera(CAM1_POS, CAM1_ORIENTATION_DEG)
 cam2 = init_camera(CAM2_POS, CAM2_ORIENTATION_DEG)
 
-time.sleep(5)   # Attendre que le robot tombe sur la table avant la capture (temporaire)
+time.sleep(1)   # Attendre que le robot tombe sur la table avant la capture (temporaire)
 rgb_img1 = read_camera(cam1)
 rgb_img2 = read_camera(cam2)
 
@@ -73,10 +73,12 @@ rgb_img2 = read_camera(cam2)
 cv2.namedWindow("cam view", cv2.WINDOW_NORMAL)
 cv2.imshow("cam view", rgb_img1)
 
+
 # Calibration et correction de perspective sur les images capturées
 transformed_frame1 = calibrationAndTransform(rgb_img1, 1, True)
 transformed_frame2 = calibrationAndTransform(rgb_img2, 2, True)
 
+time.sleep(60)
 # ------------------ SEGMENTATION PAR COULEUR ------------------
 # Détection des planches par couleur et projection 3D
 object_corners = colorSegmentation(transformed_frame1, PLANK_COLOR_BOUNDS)

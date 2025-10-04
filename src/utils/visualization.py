@@ -1,93 +1,92 @@
 import numpy as np
-from matplotlib.colors import ListedColormap
 import matplotlib.pyplot as plt
 
-class Visualization:
+def is_in_obstacle(position, obstacles):
     """
-    Classe Visualization pour afficher une grille avec des obstacles, un point de départ et un point d'arrivée.
+    Check if the given position is within any of the obstacles.
+
+    :param position: A tuple (x, y) representing the position to check.
+    :param obstacles: A list of lists containing obstacle coordinates.
+    :return: True if the position is within any obstacle, False otherwise.
+    """
+    ox, oy, sox, soy = obstacles
+
+    for ob in zip(ox, oy):
+        if position == ob:
+            return True
+    for l in range(len(sox)):
+        for ob in zip(sox[l], soy[l]):
+            if position == ob:
+                return True
+    return False
+
+class VisualizationMPL:
+    """
+    Classe Visualization MatPlotLib pour afficher une grille avec des obstacles, un point de départ et un point d'arrivée.
     Cette classe utilise matplotlib pour visualiser une grille où chaque cellule peut représenter un obstacle, 
-    le point de départ, le point d'arrivée, un robot, ou une zone interdite. Les couleurs des cellules sont 
-    définies par un dictionnaire de couleurs et une colormap personnalisée.
-    Attributs:
-    ----------
-    grid : list of list of int
-        La grille à afficher, où chaque entier représente un type de cellule.
-    cell_size : int
-        La taille de chaque cellule dans la grille.
-    start : tuple of int
-        Les coordonnées (ligne, colonne) du point de départ.
-    goal : tuple of int
-        Les coordonnées (ligne, colonne) du point d'arrivée.
-    Méthodes:
-    ---------
-    __init__(self, grid, cell_size, start, goal):
-        Initialise la grille, les couleurs, et configure l'affichage interactif.
-    update_grid(self, grid):
-        Met à jour la grille et redessine l'image.
-    finalize(self):
-        Désactive le mode interactif et affiche la figure finale.
+    le point de départ, le point d'arrivée, un robot, ou une zone interdite. 
     """
-    def __init__(self, grid, cell_size, start, goal):
-        self.grid = grid
-        self.cell_size = cell_size
-        self.start = start
-        self.goal = goal
+    def __init__(self, obstacles):
+        self.ox, self.oy, self.spoofed_ox, self.spoofed_oy = obstacles
+        self.obstacles = obstacles
 
-        # Couleurs des obstacles avec cmp HSV
-        self.group_colors = {
-            0: 'grey',  # fond
-            1: 'blue',  # obstacle
-            2: 'yellow',  # start
-            3: 'green', # end
-            4: 'orange', # robot
-            5: 'red' # no go zone
-        }
+    def get_start_goal(self, grid):
+        # Create a plot
+        plt.figure()
+        plt.grid(True)
+        #plt.axis("equal")
 
-        # Créer une colormap personnalisée basée sur ces couleurs
-        self.custom_cmap = ListedColormap([self.group_colors[key] for key in sorted(self.group_colors.keys())])
+        # Plot obstacles
+        plt.plot(self.ox, self.oy, ".k")
+        plt.plot(self.spoofed_ox, self.spoofed_oy, ".k")
 
-        # Configurer l'affichage en mode interactif
-        plt.ion()
-        self.fig, self.ax = plt.subplots(figsize=(8, 6))
+        # Legend
+        self.label_column = ['Start', 'Goal', 'Computed path', 'Waypoints', 'Obstacles']
+        self.columns = [plt.plot([], [], symbol, color=colour, alpha=alpha)[0]
+                for symbol, colour, alpha in [['o', 'g', 1],
+                                                ['x', 'b', 1],
+                                                ['.', 'c', 1],
+                                                ['d', 'r', 1],
+                                                ['.', 'k', 1]]]
+        # Start
+        print("Click to set the start position...")
+        plt.title("Click to set the start position...")
+        self.start = (0, 0)
+        while not grid.in_bound(self.start) or is_in_obstacle(self.start, self.obstacles):
+            click_input = plt.ginput(1)[0]  # Get one click
+            self.start = (int(click_input[0]), int(click_input[1]))
+        print(f"Start position set to: {self.start}")
+        sx, sy = self.start
+        plt.plot(sx, sy, "og", label='Start')
 
-        # Tracer les contours des cellules de la grille
-        big_cell_size = self.cell_size * (1 / self.cell_size)
-        for i in range(len(grid[0]) + 1):  # +1 pour inclure la dernière ligne/colonne
-            # Tracer les lignes verticales
-            self.ax.plot([i * big_cell_size - big_cell_size / 2, i * big_cell_size - big_cell_size / 2], 
-                         [0 - big_cell_size / 2, len(grid) * big_cell_size - big_cell_size / 2], 
-                         color='black', lw=0.4)
-            
-        for j in range(len(grid) + 1):  # +1 pour inclure la dernière ligne/colonne
-            # Tracer les lignes horizontales
-            self.ax.plot([0 - big_cell_size / 2, len(grid[0]) * big_cell_size - big_cell_size / 2], 
-                         [j * big_cell_size - big_cell_size / 2, j * big_cell_size - big_cell_size / 2], 
-                         color='black', lw=0.4)
+        # Goal
+        print("Click to set the goal position...")
+        plt.title("Click to set the goal position...")
+        self.goal = (0, 0)
+        while not grid.in_bound(self.goal) or is_in_obstacle(self.goal, self.obstacles):
+            click_input = plt.ginput(1)[0]  # Get one click
+            self.goal = (int(click_input[0]), int(click_input[1]))
+        print(f"Goal position set to: {self.goal}")
+        plt.title("")
+        gx, gy = self.goal
+        plt.plot(gx, gy, "xb", label='Goal')
+        print()
+        return self.start, self.goal
 
-        # Ajouter une grille et des labels pour les axes
-        self.ax.grid(False)  # Désactiver la grille par défaut
-
-        # Ajouter des annotations pour `start` et `goal`
-        self.ax.text(start[1], start[0], "S", color="white", ha="center", va="center", fontsize=12, fontweight="bold")
-        self.ax.text(goal[1], goal[0], "G", color="white", ha="center", va="center", fontsize=12, fontweight="bold")
-
-        # Afficher immédiatement la grille initiale
-        self.im = self.ax.imshow(grid, cmap=self.custom_cmap, interpolation="nearest", origin="lower")
-        plt.title("Carte des obstacles avec départ et arrivée")
-        plt.xlabel("X (indices)")
-        plt.ylabel("Y (indices)")
-        plt.draw()
-        plt.show()
-        plt.pause(0.1)
-
-    def update_grid(self, grid):
-        # Mettre à jour la grille et redessiner l'image
-        self.grid = grid
-        self.im.set_data(grid)
-        plt.draw()
-        plt.pause(0.001)
-
-    def finalize(self):
-        # Désactiver le mode interactif et afficher la figure finale
-        plt.ioff()
-        plt.show()
+    def show_path(self, path_exists, pathx, pathy, wpx, wpy):
+        if  path_exists:
+            plt.title("Path found", color='green', loc='left')
+            plt.plot(pathx, pathy, ".c", alpha=1.0)
+            plt.plot(wpx, wpy, "dr", alpha=1.0)
+            for i, coords in enumerate(zip(wpx, wpy)):
+                x, y = coords
+                plt.text(x, y+1, str(i), color="red", fontsize=12)
+        if  not path_exists:
+            plt.title("No path found", color='red', loc='left')
+        plt.legend(self.columns, self.label_column,
+                    loc='upper right',
+                    bbox_to_anchor=(1, 1.07),
+                    fontsize="xx-small",
+                    ncol=5)
+        #plt.show(block=False)
+        plt.pause(2)

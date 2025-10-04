@@ -8,6 +8,7 @@ import pybullet as p
 import numpy as np
 import cv2
 import math
+import time
 
 def init_camera(cam_position, cam_orientation_deg):
     """
@@ -70,7 +71,7 @@ def init_camera(cam_position, cam_orientation_deg):
     return view_matrix, projection_matrix
 
 
-def read_camera(camera_infos):
+def read_camera(camera_infos, divisor=1):
     """
     Capture une image à partir de la caméra virtuelle PyBullet.
 
@@ -83,17 +84,28 @@ def read_camera(camera_infos):
     view_matrix, projection_matrix = camera_infos
 
     # Capture l'image simulée depuis PyBullet
+    t0 = time.time()
     width, height, rgb_img, _, _ = p.getCameraImage(
-        width=1920, height=1080, 
-        viewMatrix=view_matrix, projectionMatrix=projection_matrix,
-        shadow=0, flags=p.ER_NO_SEGMENTATION_MASK, renderer=p.ER_TINY_RENDERER
+        width=int(1920/divisor),
+        height=int(1080/divisor), 
+        viewMatrix=view_matrix,
+        projectionMatrix=projection_matrix,
+        shadow=False,
+        flags=p.ER_NO_SEGMENTATION_MASK,
+        renderer=p.ER_BULLET_HARDWARE_OPENGL
     )
+    print(width, height, len(rgb_img))
 
-    # Conversion en format compatible OpenCV (BGR)
-    rgb_img = np.reshape(rgb_img, (height, width, 4))[:, :, :3]
+    t1 = time.time()
+    print(f"Camera capture time: {t1 - t0:.4f} seconds")
+
+    rgb_img = np.reshape(rgb_img, (height, width, 4))
+    t15 = time.time()
+    print(f"Image reshape time: {t15 - t1:.4f} seconds")
     rgb_img = rgb_img.astype(np.uint8)
     rgb_img = cv2.cvtColor(rgb_img, cv2.COLOR_RGB2BGR)
-
+    t2 = time.time()
+    print(f"Image processing time: {t2 - t1:.4f} seconds")
     return rgb_img
 
 

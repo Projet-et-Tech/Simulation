@@ -1,4 +1,6 @@
 import pybullet as p
+import pkgutil
+egl = pkgutil.get_loader('eglRenderer')
 import pybullet_data
 
 class PyBulletManager:
@@ -11,9 +13,15 @@ class PyBulletManager:
         """
         self.physics_client = p.connect(p.GUI)
         assert self.physics_client >= 0, "Erreur : Impossible de se connecter à PyBullet."
+
         p.setAdditionalSearchPath(pybullet_data.getDataPath())
+        plugin = p.loadPlugin(egl.get_filename(), "_eglRendererPlugin")
+        assert plugin >= 0, "Erreur : Impossible de charger le plugin EGL."
+        print(f"Plugin EGL chargé avec l'ID : {plugin}")
+
         p.setGravity(0, 0, -9.81)
-        p.configureDebugVisualizer(p.COV_ENABLE_GUI, debug)
+        # p.configureDebugVisualizer(p.COV_ENABLE_RENDERING, 0)
+        p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0)
         self.debug = debug
 
     def reset_camera(self, distance=2.0, yaw=0, pitch=-45, target=[0, 0, 0]):
