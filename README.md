@@ -1,13 +1,13 @@
-# Simulation & Caméra (PYBULLET & OPENCV)
+# Simulation & Caméra (SAPIEN & OPENCV)
 
-Ce répertoire centralise la partie simulation et vision du robot. L'objectif est de modéliser l'environnement dans lequel le robot évoluera (table, éléments de jeu, robot adverse) afin d'adapter les déplacements de nos différents robots et ainsi maximiser le nombre de points collectés. Nous utilisons Python et la bibliothèque Pybullet pour effectuer cette simulation.
+Ce répertoire centralise la partie simulation et vision du robot. L'objectif est de modéliser l'environnement dans lequel le robot évoluera (table, éléments de jeu, robot adverse) afin d'adapter les déplacements de nos différents robots et ainsi maximiser le nombre de points collectés. Nous utilisons Python et la bibliothèque SAPIEN pour effectuer cette simulation.
 Le répertoire contient également la partie traitement d'images, car les algorithme utitlisé sont en grande partie identique. Bien que pour des raisons d'atomicité et clarté, ces deux parties pourraient être divisées.
 
 La simulation a pour vocation de mettre en place des routines ou tests, en parallèle de la construction du robot ou en attente de matériel.
 
 ## L'application
 
-Actuellement la branche d'avancement la plus récente est `update/image`.
+Actuellement la branche d'avancement la plus récente est `main-sapien`.
 Elle contient une simulation de la table de jeu, des obstacles, du robot et de la grille de pathfinding. Le robot est capable de se déplacer sur la table en évitant les obstacles et en suivant le chemin optimal calculé par l'algorithme A*.
 Elle contient également la simulation de la détection caméra et de la calibration par Aruco dans l'environnement de simulation. Le code est très similaire à celui utilisé en conditions réelles, et permet de tester les algorithmes de vision sans avoir besoin de matériel.
 
@@ -62,3 +62,4 @@ Cette imagerie est réalisée grâce à la bibliothèque OpenCV sur python.
 N'hésitez à compltéter les différentes documentations au fur et à mesure de vos découvertes.
 
 - Ruben (septembre 2025)
+- Alexin (present)
