@@ -13,48 +13,48 @@ def main(fps=20):
     # NOTE: How to build (rigid bodies) is elaborated in create_actors.py
     scene.add_ground(altitude=0)  # Add a ground
     
-    # actor_builder = scene.create_actor_builder()
-    # actor_builder.add_box_collision(half_size=[0.5, 0.5, 0.5])
-    # actor_builder.add_box_visual(half_size=[0.5, 0.5, 0.5], material=[1.0, 0.0, 0.0])
-    # box = actor_builder.build(name="box")  # Add a box
-    # box.set_pose(sapien.Pose(p=[0, 0, 0.5]))
 
-    # loader = scene.create_urdf_loader()
-    # table = loader.load("src/urdf_models/table_eurobot2025.urdf")
-    # table.set_root_pose(sapien.Pose([0, 0, 0], [1, 0, 0, 0]))
 
-    builder = scene.create_actor_builder()
-    builder.add_convex_collision_from_file(
+    table_builder = scene.create_actor_builder()
+    table_builder.add_convex_collision_from_file(
         filename="src/urdf_models/table.obj"
     )
-    # builder.add_visual_from_file(filename="src/urdf_models/table.mtl")
+    table_material = sapien.render.RenderMaterial()
+    table_material.base_color_texture = sapien.render.RenderTexture2D(filename="src/urdf_models/Vinyle_2025_FINAL.jpg")
+    table_builder.add_visual_from_file(filename="src/urdf_models/table.obj", material=table_material)
+    mesh = table_builder.build(name="mesh")
+    mesh.set_pose(sapien.Pose(p=[0, 0, 0], q=[-0.5, -0.5, 0.5, 0.5]))
 
-    mt = sapien.render.RenderMaterial()
-    mt.diffuse_texture = sapien.render.RenderTexture2D(filename="src/urdf_models/Vinyle_2025_FINAL.jpg")
-    builder.add_visual_from_file(filename="src/urdf_models/table.obj", material=mt)
-
-    mesh = builder.build(name="mesh")
-    mesh.set_pose(sapien.Pose(p=[0, 0, 0], q=[0.707, 0.707, 0, 0]))
-
-    # q is quaternion angle.
-    # [1, 0, 0, 0] means no rotation
-    # [0.707, 0, 0.707, 0] means 90 degree rotation around x axis
-    # [0.707, 0.707, 0, 0] means 90 degree rotation around y axis
-    # [0.707, 0, 0, 0.707] means 90 degree rotation around z axis
+    robot_builder = scene.create_actor_builder()
+    half_size=[0.32/2, 0.32/2, 0.35/2]
+    robot_builder.add_box_collision(half_size=half_size)
+    robot_mt = sapien.render.RenderMaterial()
+    robot_mt.base_color = [0.8, 0.1, 0.1, 1] # Red color
+    robot_builder.add_box_visual(half_size=half_size, material=robot_mt)
+    robot = robot_builder.build(name="box")
+    robot.set_pose(sapien.Pose(p=[0, 0, 0.2]))
 
     # Add some lights so that you can observe the scene
     scene.set_ambient_light([0.5, 0.5, 0.5])
     scene.add_directional_light([0, 1, -1], [0.5, 0.5, 0.5])
 
-    viewer = scene.create_viewer()  # Create a viewer (window)
+    if 1:
+        viewer = scene.create_viewer()  # Create a viewer (window)
+        # The coordinate frame in Sapien is: x(forward), y(left), z(upward)
+        # The principle axis of the camera is the x-axis
+        viewer.set_camera_xyz(x=-4, y=0, z=2)
+        # The rotation of the free camera is represented as [roll(x), pitch(-y), yaw(-z)]
+        # The camera now looks at the origin
+        viewer.set_camera_rpy(r=0, p=-np.arctan2(2, 4), y=0)
+        viewer.window.set_camera_parameters(near=0.05, far=100, fovy=1)
+    else:
+        class NoViewer:
+            closed = False
 
-    # The coordinate frame in Sapien is: x(forward), y(left), z(upward)
-    # The principle axis of the camera is the x-axis
-    viewer.set_camera_xyz(x=-4, y=0, z=2)
-    # The rotation of the free camera is represented as [roll(x), pitch(-y), yaw(-z)]
-    # The camera now looks at the origin
-    viewer.set_camera_rpy(r=0, p=-np.arctan2(2, 4), y=0)
-    viewer.window.set_camera_parameters(near=0.05, far=100, fovy=1)
+            def render(self):
+                pass
+
+        viewer = NoViewer()
 
     ############################ Camera
     near, far = 0.1, 100
@@ -84,26 +84,32 @@ def main(fps=20):
     cv2.namedWindow("Camera", cv2.WINDOW_NORMAL)
 
     ##########################################################
-    while not viewer.closed:  # Press key q to quit
+    while not viewer.closed:
         scene.step()  # Simulate the world
         scene.update_render()  # Update the world to the renderer
+        viewer.render()
 
         t0 = time.time()
         camera.take_picture()
-        print("Camera latency:", time.time() - t0)
 
         t1 = time.time()
         rgba = camera.get_picture("Color")  # [H, W, 4]
-        print("Read camera data latency:", time.time() - t1)
-
-        print()
+        print("Camera latency:", time.time() - t0, "Read camera data latency:", time.time() - t1, end="\r")
 
         rgba_img = (rgba * 255).astype(np.uint8)
+        rgba_img = cv2.cvtColor(rgba_img, cv2.COLOR_RGBA2BGRA)
         cv2.imshow("Camera", rgba_img)
-        cv2.waitKey(fps * 1000)
+        key = cv2.waitKey(1000 // fps)
 
-        viewer.render()
+        try:
+            if cv2.getWindowProperty("Camera", cv2.WND_PROP_VISIBLE) < 1:
+                break
+        except Exception:
+            break
+        if key == 27:
+            break
 
+    cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     main()
