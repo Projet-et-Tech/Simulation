@@ -14,7 +14,10 @@ ROBOT_SPEED = 0.4
 ROBOT_ROTATION_SPEED = 5
 DEBUG = False
 
-CAN_RADIUS = 0.17/2 
+# -------- OBJECTS -------- #
+CAN_RADIUS = 0.05
+CAN_HEIGHT = 0.10
+
 ROBOT_RADIUS = 0.45/1.9
 
 # -------- ARUCO MARKERS -------- #
@@ -42,7 +45,6 @@ CAM2_ORIENTATION_DEG = [0, 40, 40]
 # -------- PAMI -------- #
 
 PAMI_HEIGHT = 0.1
-
 PAMI_ID = 6
 
 # -------- OBSTACLES -------- #
