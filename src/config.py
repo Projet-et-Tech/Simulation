@@ -1,12 +1,21 @@
 import numpy as np
 
-# -------- TABLE -------- #
-
 TABLE_HEIGHT = 0.1
 TABLE_LENGTH = 3
 TABLE_WIDTH = 2
+CELL_SIZE = 0.04
 
-CELL_SIZE = 0.05
+# -------- ROBOT -------- #
+
+ROBOT_ID = 2
+
+ROBOT_START_POS = [0, 0, TABLE_HEIGHT + 0.1]
+ROBOT_SPEED = 0.4
+ROBOT_ROTATION_SPEED = 5
+DEBUG = False
+
+CAN_RADIUS = 0.17/2 
+ROBOT_RADIUS = 0.45/1.9
 
 # -------- ARUCO MARKERS -------- #
 
@@ -21,19 +30,6 @@ CORNER_TOP_RIGHT_ID = 20
 CORNER_BOTTOM_LEFT_ID = 23
 CORNER_BOTTOM_RIGHT_ID = 21
 
-# -------- ROBOT -------- #
-
-ROBOT_START_POS = [0.14, -0.53, TABLE_HEIGHT + 0.1]
-ROBOT_SPEED = 0.4
-ROBOT_ROTATION_SPEED = 5
-
-ROBOT_ID = 2
-
-# -------- PAMI -------- #
-
-PAMI_HEIGHT = 0.1
-
-PAMI_ID = 6
 
 # -------- CAMERA -------- #
 
@@ -43,13 +39,16 @@ CAM1_ORIENTATION_DEG = [180, 120, 0]
 CAM2_POS = [-1.5, -1, 1]
 CAM2_ORIENTATION_DEG = [0, 40, 40]
 
-# -------- DEBUG -------- #
+# -------- PAMI -------- #
 
-DEBUG = False
+PAMI_HEIGHT = 0.1
+
+PAMI_ID = 6
 
 # -------- OBSTACLES -------- #
-
 CAN_ID = 47
+PLANK_COLOR_BOUNDS = {"planche": (np.array([10, 100, 20]), np.array([20, 255, 200]))}
+
 CAN_POSITIONS = [
     # De gauche a droite de haut en bas
     # Moitie gauche
@@ -96,7 +95,6 @@ CAN_POSITIONS = [
     [0.25, -0.05, 0.1],
 ]
 
-PLANK_COLOR_BOUNDS = {"planche": (np.array([10, 100, 20]), np.array([20, 255, 200]))}
 PLANK_POSITIONS_HORIZONTAL = [
     # De gauche a droite de haut en bas
     # Moitie gauche
@@ -114,6 +112,7 @@ PLANK_POSITIONS_HORIZONTAL = [
     [0.4, -0.05, 0.15],
     [0.4, -0.05, 0.2],
 ]
+
 PLANK_POSITIONS_VERTICAL = [
     # De gauche a droite de haut en bas
     # Moitie gauche

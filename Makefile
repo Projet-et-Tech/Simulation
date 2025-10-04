@@ -6,6 +6,7 @@ install:
 environment:
 	(\
 		echo "> Creating venv"; \
+		sudo apt-get install python3-venv -y; \
 		python3 -m venv .venv; \
 		source .venv/bin/activate; \
 		echo "> Installing requirements"; \
@@ -13,18 +14,15 @@ environment:
 		sudo apt-get install python3-tk -y; \
 	)
 
-clean: ## Remove virtual env
+clean:
 	echo "> Removing virtual environment"
 	rm -r .venv
 
-runCamera: ## Run default mode
-	python3 src/mainCamera.py
+runCameraReel:
+	python3 src/mainCameraReel.py
 
-runSimu:
-	python3 PythonApplication2.py
+runCameraSimu:
+	python3 src/mainCameraSimu.py
 
 run:
-	python3 src/main.py;
-
-debug: ## Run local mode
-	python3 src/main.py --debug --env local
+	python3 src/main.py

@@ -141,6 +141,7 @@ def calibrationAndTransform(frame, camNumber, enableManualCalibration=False):
             perspective_matrix = np.float32(matrix_as_list).reshape(3, 3)
     except FileNotFoundError:
         # Fichier non trouvé : calibration nécessaire
+        enableManualCalibration = True
         write_file = True
 
     # ---------------------- COMPUTE PRESPECTIVE MATRIX IF NOT LOADED ---------------------- #
@@ -178,8 +179,11 @@ def calibrationAndTransform(frame, camNumber, enableManualCalibration=False):
 
     if perspective_matrix is None and enableManualCalibration:
         # Calibration manuelle par clic utilisateur
+        print("1")
         centers = getCornersFromUserClick(frame)
+        print("2")
         transformed_frame, perspective_matrix, pixels_per_cm = apply_perspective_transform(frame, centers)
+        print("3")
 
     if perspective_matrix is not None:
         # Utilise la matrice de transformation préchargée

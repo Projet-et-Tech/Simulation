@@ -1,30 +1,11 @@
-import math
+import time
+import numpy as np
 
-def distance(point1, point2):
-    """
-    Calcule la distance euclidienne entre deux points 3D.
-
-    Args:
-        point1 (tuple): Coordonnées (x, y, z) du premier point.
-        point2 (tuple): Coordonnées (x, y, z) du second point.
-
-    Returns:
-        float: Distance euclidienne entre les deux points.
-    """
-    return math.sqrt((point2[0] - point1[0])**2 + (point2[1] - point1[1])**2 + (point2[2] - point1[2])**2)
+def distance_3d(point1, point2):
+    return np.sqrt((point2[0] - point1[0])**2 + (point2[1] - point1[1])**2 + (point2[2] - point1[2])**2)
 
 def distance_2d(point1, point2):
-    """
-    Calcule la distance euclidienne entre deux points 2D.
-
-    Args:
-        point1 (tuple): Coordonnées (x, y) du premier point.
-        point2 (tuple): Coordonnées (x, y) du second point.
-
-    Returns:
-        float: Distance euclidienne entre les deux points.
-    """
-    return math.sqrt((point2[0] - point1[0])**2 + (point2[1] - point1[1])**2)
+    return np.hypot(point1, point2)
 
 def interpolate_position(start, end, steps):
     """
