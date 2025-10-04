@@ -16,7 +16,7 @@ DEBUG = False
 
 # -------- OBJECTS -------- #
 CAN_RADIUS = 0.05
-CAN_HEIGHT = 0.10
+CAN_HEIGHT = 0.12
 
 ROBOT_RADIUS = 0.45/1.9
 

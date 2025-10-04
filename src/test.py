@@ -2,18 +2,25 @@ import time
 import sapien
 from sapien.utils import Viewer
 import numpy as np
+import cv2
 
 import config
 
-# pip install opencv-python
-import cv2
+def normalize_image(img):
+    """Normalize image to [0, 1] range."""
+    img_min = img.min()
+    img_max = img.max()
+    if img_max - img_min > 1e-5:
+        normalized_img = (img - img_min) / (img_max - img_min)
+    else:
+        normalized_img = np.zeros_like(img)
+    return normalized_img * 255
 
-def main(fps=200):
-    scene = sapien.Scene()  # Create an instance of simulation world (aka scene)
-    scene.set_timestep(1 / 100.0)  # Set the simulation frequency
+def main(fps=50):
+    scene = sapien.Scene()
+    scene.set_timestep(1 / 100.0)
 
-    # NOTE: How to build (rigid bodies) is elaborated in create_actors.py
-    scene.add_ground(altitude=0)  # Add a ground
+    scene.add_ground(altitude=0)
 
     table_builder = scene.create_actor_builder()
     table_builder.add_convex_collision_from_file(filename="src/urdf_models/table.obj")
@@ -47,21 +54,15 @@ def main(fps=200):
     scene.add_directional_light([0, 1, -1], [0.5, 0.5, 0.5])
 
     if 1:
-        viewer = scene.create_viewer()  # Create a viewer (window)
-        # The coordinate frame in Sapien is: x(forward), y(left), z(upward)
-        # The principle axis of the camera is the x-axis
+        viewer = scene.create_viewer()
         viewer.set_camera_xyz(x=0, y=0, z=3.2)
-        # The rotation of the free camera is represented as [roll(x), pitch(-y), yaw(-z)]
-        # The camera now looks at the origin
         viewer.set_camera_rpy(r=0, p=-np.pi / 2, y=0)
         viewer.window.set_camera_parameters(near=0.05, far=100, fovy=1)
     else:
         class NoViewer:
             closed = False
-
             def render(self):
                 pass
-
         viewer = NoViewer()
 
     ############################ Camera
@@ -96,30 +97,33 @@ def main(fps=200):
     real_fps = 0
     t0 = time.time()
     while not viewer.closed:
-        scene.step()  # Simulate the world
-        scene.update_render()  # Update the world to the renderer
+        scene.step()
+        scene.update_render()
         viewer.render()
 
-        t1 = time.time()
+        # rgba_viewer = viewer.window.get_picture("Color")
+        # rgba_viewer_img = (rgba_viewer * 255).clip(0, 255)
+
         camera.take_picture()
 
-        t2 = time.time()
-        rgba = camera.get_picture("Color")
+        # rgba_camera = camera.get_picture("Color")
+        # rgba_camera_img = (rgba_camera * 255).clip(0, 255)
+        
+        # position = camera.get_picture("Position")
+        # depth = -position[..., 2]
+        # depth_img = (depth * 1000.0).astype(np.uint16)
 
-        rgba_img = (rgba * 255).astype(np.uint8)
-        rgba_img = cv2.cvtColor(rgba_img, cv2.COLOR_RGBA2BGRA)
-        cv2.imshow("Camera", rgba_img)
-        key = cv2.waitKey(1000 // fps)
+        seg_labels = camera.get_picture("Segmentation")
+        label_img = np.mean(seg_labels, axis=-1)
 
+        img = normalize_image(label_img).astype("uint8")
+        img = cv2.cvtColor(img, cv2.COLOR_RGBA2BGRA)
+        cv2.imshow("Camera", img)
+        key = cv2.waitKey(1)
         
         real_fps += 1
         if time.time() - t0 >= 1.0:
-            cam_latency = t2 - t1
-            cam_read_latency = time.time() - t2
-            print(
-                f"FPS: {real_fps} | Camera latency: {cam_latency:.2e} | Read camera data latency: {cam_read_latency:.2e}",
-                end="\r"
-            )
+            print("FPS: ",real_fps, end="\r")
             real_fps = 0
             t0 = time.time()        
         
