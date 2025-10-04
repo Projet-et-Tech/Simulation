@@ -6,17 +6,41 @@ import numpy as np
 # pip install opencv-python
 import cv2
 
-def main():
+def main(fps=20):
     scene = sapien.Scene()  # Create an instance of simulation world (aka scene)
     scene.set_timestep(1 / 100.0)  # Set the simulation frequency
 
     # NOTE: How to build (rigid bodies) is elaborated in create_actors.py
     scene.add_ground(altitude=0)  # Add a ground
-    actor_builder = scene.create_actor_builder()
-    actor_builder.add_box_collision(half_size=[0.5, 0.5, 0.5])
-    actor_builder.add_box_visual(half_size=[0.5, 0.5, 0.5], material=[1.0, 0.0, 0.0])
-    box = actor_builder.build(name="box")  # Add a box
-    box.set_pose(sapien.Pose(p=[0, 0, 0.5]))
+    
+    # actor_builder = scene.create_actor_builder()
+    # actor_builder.add_box_collision(half_size=[0.5, 0.5, 0.5])
+    # actor_builder.add_box_visual(half_size=[0.5, 0.5, 0.5], material=[1.0, 0.0, 0.0])
+    # box = actor_builder.build(name="box")  # Add a box
+    # box.set_pose(sapien.Pose(p=[0, 0, 0.5]))
+
+    # loader = scene.create_urdf_loader()
+    # table = loader.load("src/urdf_models/table_eurobot2025.urdf")
+    # table.set_root_pose(sapien.Pose([0, 0, 0], [1, 0, 0, 0]))
+
+    builder = scene.create_actor_builder()
+    builder.add_convex_collision_from_file(
+        filename="src/urdf_models/table.obj"
+    )
+    # builder.add_visual_from_file(filename="src/urdf_models/table.mtl")
+
+    mt = sapien.render.RenderMaterial()
+    mt.diffuse_texture = sapien.render.RenderTexture2D(filename="src/urdf_models/Vinyle_2025_FINAL.jpg")
+    builder.add_visual_from_file(filename="src/urdf_models/table.obj", material=mt)
+
+    mesh = builder.build(name="mesh")
+    mesh.set_pose(sapien.Pose(p=[0, 0, 0], q=[0.707, 0.707, 0, 0]))
+
+    # q is quaternion angle.
+    # [1, 0, 0, 0] means no rotation
+    # [0.707, 0, 0.707, 0] means 90 degree rotation around x axis
+    # [0.707, 0.707, 0, 0] means 90 degree rotation around y axis
+    # [0.707, 0, 0, 0.707] means 90 degree rotation around z axis
 
     # Add some lights so that you can observe the scene
     scene.set_ambient_light([0.5, 0.5, 0.5])
@@ -76,7 +100,7 @@ def main():
 
         rgba_img = (rgba * 255).astype(np.uint8)
         cv2.imshow("Camera", rgba_img)
-        cv2.waitKey(1)
+        cv2.waitKey(fps * 1000)
 
         viewer.render()
 
