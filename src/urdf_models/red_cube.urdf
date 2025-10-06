@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<robot name="red_cube">
+
+  <link name="cube">
+    <visual>
+      <geometry>
+        <box size="0.32 0.32 0.35"/>  <!-- Dimensions of the cube -->
+      </geometry>
+      <material name="red_material">
+        <color rgba="1 0 0 1"/>  <!-- Red color with full opacity -->
+      </material>
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="0.32 0.32 0.35"/>  <!-- Dimensions for collision -->
+      </geometry>
+    </collision>
+
+    <inertial>
+      <mass value="4.0"/>
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
+    </inertial>
+  </link>
+
+  <link name="world"/>
+  <joint name="world_to_cube" type="fixed">
+    <parent link="world"/>
+    <child link="cube"/>
+  </joint>
+
+</robot>

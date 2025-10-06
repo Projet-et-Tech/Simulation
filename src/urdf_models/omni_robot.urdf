@@ -1,0 +1,117 @@
+<?xml version="1.0" ?>
+<robot name="omni_wheel_robot">
+
+  <link name="base_cube">
+    <visual>
+      <geometry>
+        <box size="0.32 0.32 0.1"/> <!-- Thinner cube for base -->
+      </geometry>
+      <material name="red_material">
+        <color rgba="1 0 0 1"/>
+      </material>
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="0.32 0.32 0.1"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <mass value="4.0"/>
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
+    </inertial>
+  </link>
+
+  <link name="world"/>
+  
+  <!-- Revolute joint for base rotation -->
+  <joint name="base_rotation" type="revolute">
+    <parent link="world"/>
+    <child link="base_cube"/>
+    <axis xyz="0 0 1"/>  <!-- Rotate about Z-axis -->
+    <limit lower="-3.14" upper="3.14"/>
+  </joint>
+
+  <!-- Prismatic joints for forward/backward and side-to-side movement -->
+  <!-- This can be managed by different robot control logic -->
+  <joint name="x_translation" type="prismatic">
+    <parent link="world"/>
+    <child link="base_cube"/>
+    <axis xyz="1 0 0"/>  <!-- Move along X-axis -->
+    <limit lower="-1.0" upper="1.0"/> <!-- Example limits -->
+  </joint>
+
+  <joint name="y_translation" type="prismatic">
+    <parent link="world"/>
+    <child link="base_cube"/>
+    <axis xyz="0 1 0"/>  <!-- Move along Y-axis -->
+    <limit lower="-1.0" upper="1.0"/> <!-- Example limits -->
+  </joint>
+
+  <!-- Add wheels -->
+  <link name="wheel_fl">
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.1"/> <!-- Front-left wheel -->
+      </geometry>
+      <material name="black_material">
+        <color rgba="0 0 0 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="wheel_fl_joint" type="revolute">
+    <parent link="base_cube"/>
+    <child link="wheel_fl"/>
+    <axis xyz="0 0 1"/> <!-- Rotation axis for the wheel -->
+    <limit lower="-1.57" upper="1.57"/> <!-- Wheel rotation limits -->
+  </joint>
+
+  <!-- Define other wheels similarly -->
+  <link name="wheel_fr">
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.1"/> <!-- Front-right wheel -->
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="wheel_fr_joint" type="revolute">
+    <parent link="base_cube"/>
+    <child link="wheel_fr"/>
+    <axis xyz="0 0 1"/> <!-- Rotation axis for the wheel -->
+    <limit lower="-1.57" upper="1.57"/>
+  </joint>
+
+  <link name="wheel_rl">
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.1"/> <!-- Rear-left wheel -->
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="wheel_rl_joint" type="revolute">
+    <parent link="base_cube"/>
+    <child link="wheel_rl"/>
+    <axis xyz="0 0 1"/> <!-- Rotation axis for the wheel -->
+    <limit lower="-1.57" upper="1.57"/>
+  </joint>
+
+  <link name="wheel_rr">
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.1"/> <!-- Rear-right wheel -->
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="wheel_rr_joint" type="revolute">
+    <parent link="base_cube"/>
+    <child link="wheel_rr"/>
+    <axis xyz="0 0 1"/> <!-- Rotation axis for the wheel -->
+    <limit lower="-1.57" upper="1.57"/> <!-- Wheel rotation limits -->
+  </joint>
+
+</robot>
