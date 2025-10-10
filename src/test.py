@@ -1,10 +1,27 @@
-import time
-import sapien
-from sapien.utils import Viewer
-import numpy as np
-import cv2
-import threading
-import queue
+import os
+
+host = os.environ['SESSION_MANAGER'].split(',')[0].split(':')[0].split('/')[1]
+print(f"Current host: {host}")
+if host == 'PT-PC-OptiPlex-7060':
+    print("""
+#################################################
+########  Le CPU ne tient pas la charge  ########
+#################################################
+    """)
+    # Set the VK_ICD_FILENAMES environment variable
+    os.environ['VK_ICD_FILENAMES'] = '/usr/share/vulkan/icd.d/lvp_icd.x86_64.json'
+
+try:
+    import time
+    import sapien
+    from sapien.utils import Viewer
+    import numpy as np
+    import cv2
+    import threading
+    import queue
+except Exception as e:
+    print(f"IMPORT ERROR ! ({e})")
+    print("Run 'make environment' or 'make install' to get the required modules")
 
 import config
 
