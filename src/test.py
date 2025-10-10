@@ -11,13 +11,17 @@ if host == 'PT-PC-OptiPlex-7060':
     # Set the VK_ICD_FILENAMES environment variable
     os.environ['VK_ICD_FILENAMES'] = '/usr/share/vulkan/icd.d/lvp_icd.x86_64.json'
 
-import time
-import sapien
-from sapien.utils import Viewer
-import numpy as np
-import cv2
-import threading
-import queue
+try:
+    import time
+    import sapien
+    from sapien.utils import Viewer
+    import numpy as np
+    import cv2
+    import threading
+    import queue
+except Exception as e:
+    print(f"IMPORT ERROR ! ({e})")
+    print("Run 'make environment' or 'make install' to get the required modules")
 
 import config
 
