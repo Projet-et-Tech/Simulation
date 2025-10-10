@@ -72,7 +72,7 @@ def optimized_image_capture(camera):
 
 def display_images(processed_images):
     # Choose which image to display
-    img = processed_images['segmentation']
+    img = processed_images['camera_color']
     
     # Normalize and convert
     img = normalize_image(img).astype("uint8")
@@ -132,7 +132,7 @@ def pid_forward(pids, target_pos, current_pos, dt):
 ######################################################################################################################
 
 
-def main(fps=10):
+def main(fps=1000):
     scene = sapien.Scene()
     scene.set_timestep(1 / 100.0)
 
@@ -157,7 +157,7 @@ def main(fps=10):
 
     loader = scene.create_urdf_loader()
     loader.fix_root_link = False
-    robot = loader.load("src/urdf_models/omni_robot.urdf")
+    robot = loader.load("src/urdf_models/red_cube_v2.urdf")
     robot.set_name("robot")
     robot.set_pose(sapien.Pose(p=[0.025, 0, 0.3]))
 
@@ -175,7 +175,7 @@ def main(fps=10):
     scene.set_ambient_light([0.5, 0.5, 0.5])
     scene.add_directional_light([0, 1, -1], [0.5, 0.5, 0.5])
 
-    if 1:
+    if 0:
         viewer = scene.create_viewer()
         viewer.set_camera_xyz(x=0, y=0, z=3.2)
         viewer.set_camera_rpy(r=0, p=-np.pi / 2, y=0)
@@ -236,55 +236,10 @@ def main(fps=10):
         viewer.render()
 
         current_pose = robot.get_pose()
-        target_pose = sapien.Pose(p=[0.25, 1, current_pose.p[2]])
+        target_pose = sapien.Pose(p=[0.25, 0.5, current_pose.p[2]])
 
-        # pids = []
-        # active_joints = robot.get_active_joints()
-        # pid_parameters = [(0.5, 0.0, 0.05)] * len(active_joints)
-        # print("Active joints:", [joint.get_name() for joint in active_joints], len(active_joints))
-
-        # for i, joint in enumerate(active_joints):
-        #     pids.append(SimplePID(*pid_parameters[i]))
-
-        # qf = robot.compute_passive_force(
-        #     gravity=True,
-        #     coriolis_and_centrifugal=True
-        # )
-
-        # pid_qf = pid_forward(
-        #     pids, target_pose, current_pose, scene.get_timestep()
-        # )
-
-        # print("Current position:", robot.get_dof())
-        # print("Passive force:", qf)
-        # print("Target position:", target_pose)
-        # print("Current position:", robot.get_pose())
-        # print("PID force:", pid_qf)
-
-        # qf += pid_qf
-        # robot.set_qf(qf)
-
-        # Get control for base rotation and wheel joints
-        joints = robot.get_joints()
-        # print(type(joints), type(joints[0]), len(joints), [j.get_name() for j in joints])
-
-        wheel_fls = robot.find_joint_by_name("wheel_fl_joint")
-        wheel_fr = robot.find_joint_by_name("wheel_fr_joint")
-        wheel_rl = robot.find_joint_by_name("wheel_rl_joint")
-        wheel_rr = robot.find_joint_by_name("wheel_rr_joint")
-
-        # Omnidirectional wheel speed calculation
-        # target_velocity = 0.0
-        # wheel_speed_fl = target_velocity
-        # wheel_speed_fr = target_velocity
-        # wheel_speed_rl = target_velocity
-        # wheel_speed_rr = target_velocity
-
-        # # Set wheel speeds for omnidirectional movement
-        # wheel_fls.set_drive_velocity_target(velocity=wheel_speed_fl)
-        # wheel_fr.set_drive_velocity_target(velocity=wheel_speed_fr)
-        # wheel_rl.set_drive_velocity_target(velocity=wheel_speed_rl)
-        # wheel_rr.set_drive_velocity_target(velocity=wheel_speed_rr)
+        velocity = (target_pose.p - current_pose.p) / np.linalg.norm(target_pose.p - current_pose.p) * 0.5
+        robot.set_root_linear_velocity(velocity)
 
 
         # Check for captured images (non-blocking)
