@@ -3,3 +3,4 @@ pybullet
 matplotlib
 numpy
 opencv-python
+numpy-quaternion

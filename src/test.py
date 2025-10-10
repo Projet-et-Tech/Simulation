@@ -16,6 +16,7 @@ try:
     import sapien
     from sapien.utils import Viewer
     import numpy as np
+    import quaternion
     import cv2
     import threading
     import queue
@@ -99,38 +100,6 @@ def image_capture_thread(camera, image_queue):
             print(f"Capture thread error: {e}")
             break
 
-################################################ PID Controller ######################################################
-
-class SimplePID:
-    def __init__(self, kp=0.0, ki=0.0, kd=0.0):
-        self.p = kp
-        self.i = ki
-        self.d = kd
-
-        self._cp = 0
-        self._ci = 0
-        self._cd = 0
-
-        self._last_error = 0
-
-    def compute(self, current_error, dt):
-        self._cp = current_error
-        self._ci += current_error * dt
-        self._cd = (current_error - self._last_error) / dt
-        self._last_error = current_error
-        signal = (self.p * self._cp) + (self.i * self._ci) + (self.d * self._cd)
-        return signal
-
-def pid_forward(pids, target_pos, current_pos, dt):
-    target = np.concat([target_pos.p, target_pos.q])
-    current = np.concat([current_pos.p, current_pos.q])
-    errors = target - current
-    qf = [pid.compute(error, dt) for pid, error in zip(pids, errors)]
-    return np.array(qf)
-
-
-######################################################################################################################
-
 
 def main(fps=1000):
     scene = sapien.Scene()
@@ -159,7 +128,9 @@ def main(fps=1000):
     loader.fix_root_link = False
     robot = loader.load("src/urdf_models/red_cube_v2.urdf")
     robot.set_name("robot")
-    robot.set_pose(sapien.Pose(p=[0.025, 0, 0.3]))
+
+    angle = quaternion.from_euler_angles([0, 0, np.pi / 2])
+    robot.set_pose(sapien.Pose(p=[0.025, 0, 0.3], q=quaternion.as_float_array(angle)))
 
     can_builder = scene.create_actor_builder()
     can_builder.add_cylinder_collision(radius=config.CAN_RADIUS, half_length=config.CAN_HEIGHT / 2)
@@ -238,9 +209,10 @@ def main(fps=1000):
         current_pose = robot.get_pose()
         target_pose = sapien.Pose(p=[0.25, 0.5, current_pose.p[2]])
 
-        velocity = (target_pose.p - current_pose.p) / np.linalg.norm(target_pose.p - current_pose.p) * 0.5
-        robot.set_root_linear_velocity(velocity)
-
+        velocity_vector = target_pose.p - current_pose.p
+        velocity_norm = np.linalg.norm(velocity_vector)
+        velocity = velocity_vector / velocity_norm
+        robot.set_root_linear_velocity(velocity * 0.8)
 
         # Check for captured images (non-blocking)
         try:
