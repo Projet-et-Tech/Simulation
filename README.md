@@ -1,7 +1,5 @@
 # Simulation & Caméra (SAPIEN & OPENCV)
 
-Migration en cours : Pour l'instant en phase de TEST ! Seul `src/test.py` contient le code pour l'environnement utilisant SAPIEN.
-
 * * *
 
 Ce répertoire centralise la partie simulation et vision du robot. L'objectif est de modéliser l'environnement dans lequel le robot évoluera (table, éléments de jeu, robot adverse) afin d'adapter les déplacements de nos différents robots et ainsi maximiser le nombre de points collectés. Nous utilisons Python et la bibliothèque SAPIEN pour effectuer cette simulation.
