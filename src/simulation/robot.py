@@ -1,55 +1,53 @@
-import pybullet as p
+import numpy as np
+import sapien
 
 class Robot:
-    def __init__(self, urdf_path, start_pos, start_orientation, scaling=1.0):
-        """
-        Initialise le robot en chargeant son modèle URDF.
+    """Class to load and manage a robot in the SAPIEN simulation environment."""
+    def __init__(self,
+            scene, 
+            urdf_path="src/urdf_models/red_cube_v2.urdf", 
+            position=[0.025, 0, 0.3], 
+            orientation=[0, 0, 0, 1]
+            ):
+        loader = scene.create_urdf_loader()
+        loader.fix_root_link = False
+        self.robot = loader.load(urdf_path)
+        self.robot.set_name("robot")
+        self.robot.set_pose(sapien.Pose(p=position, q=orientation))
 
-        Args:
-            urdf_path (str): Chemin vers le fichier URDF du robot.
-            start_pos (list): Position initiale du robot [x, y, z].
-            start_orientation (list): Orientation initiale du robot en quaternion [x, y, z, w].
-            scaling (float): Facteur d'échelle pour le modèle URDF.
-        """
-        self.robot_id = p.loadURDF(urdf_path, start_pos, start_orientation, globalScaling=scaling)
-        self.start_pos = start_pos
-        self.start_orientation = start_orientation
+    def move_to(self, target_pose, speed_factor=0.8):
+        """Move the robot's root link to a specified pose."""
+        current_pose = self.get_pose()
+        target_pose = np.array(target_pose)
+        # Permute target x and y
+        target_pose = np.array([target_pose[0], target_pose[1], current_pose.p[2]])
 
-    def get_position_and_orientation(self):
-        """
-        Retourne la position et l'orientation actuelles du robot.
+        distance_vector = target_pose - current_pose.p
+        distance_norm = np.linalg.norm(distance_vector)
+        if distance_norm > 1e-2:
+            direction = distance_vector / distance_norm 
+            self.set_root_linear_velocity(direction * speed_factor)
+            return False, distance_norm
+        else:
+            self.set_root_linear_velocity([0, 0, 0])
+            return True, distance_norm
 
-        Returns:
-            tuple: Position (x, y, z) et orientation quaternion (x, y, z, w).
-        """
-        return p.getBasePositionAndOrientation(self.robot_id)
+    def get_pose(self):
+        """Get the current pose of the robot's root link."""
+        return self.robot.get_pose()
 
-    def set_position_and_orientation(self, position, orientation):
-        """
-        Définit la position et l'orientation du robot.
+    def set_root_linear_velocity(self, velocity):
+        """Set the linear velocity of the robot's root link."""
+        self.robot.set_root_linear_velocity(velocity)
 
-        Args:
-            position (list): Nouvelle position [x, y, z].
-            orientation (list): Nouvelle orientation en quaternion [x, y, z, w].
-        """
-        p.resetBasePositionAndOrientation(self.robot_id, position, orientation)
+    def set_root_angular_velocity(self, angular_velocity):
+        """Set the angular velocity of the robot's root link."""
+        self.robot.set_root_angular_velocity(angular_velocity)
 
-    def set_velocity(self, linear_velocity=[0, 0, 0], angular_velocity=[0, 0, 0]):
-        """
-        Définit la vitesse linéaire et angulaire du robot.
+    def get_root_linear_velocity(self):
+        """Get the linear velocity of the robot's root link."""
+        return self.robot.get_root_linear_velocity()
 
-        Args:
-            linear_velocity (list): Vitesse linéaire [x, y, z].
-            angular_velocity (list): Vitesse angulaire [x, y, z].
-        """
-        p.resetBaseVelocity(self.robot_id, linearVelocity=linear_velocity, angularVelocity=angular_velocity)
-
-    def apply_action(self, action):
-        """
-        Applique une action au robot (par exemple, définir des vitesses pour les moteurs).
-
-        Args:
-            action (dict): Dictionnaire contenant les actions à appliquer.
-        """
-        for joint, value in action.items():
-            p.setJointMotorControl2(self.robot_id, joint, p.VELOCITY_CONTROL, targetVelocity=value)
+    def get_root_angular_velocity(self):
+        """Get the angular velocity of the robot's root link."""
+        return self.robot.get_root_angular_velocity()

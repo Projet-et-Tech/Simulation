@@ -16,13 +16,13 @@ class Grid:
         """Convertit une position physique en indices de la grille alignée avec l'origine."""
         x_index = int((position[0] / self.cell_size) + (self.grid_cols // 2))
         y_index = int((position[1] / self.cell_size) + (self.grid_rows // 2))
-        return y_index, x_index
+        return [y_index, x_index]
 
     def grid_index_to_position(self, grid_index):
         """Convertit les indices de la grille en coordonnées physiques."""
         x_pos = (grid_index[0] - self.grid_cols // 2) * self.cell_size
         y_pos = (grid_index[1] - self.grid_rows // 2) * self.cell_size
-        return x_pos, y_pos, self.table_height
+        return [-x_pos, -y_pos, self.table_height]
 
     def mark_can_on_grid(self, center, radius):
         y_idx, x_idx = self.position_to_grid_index(center)

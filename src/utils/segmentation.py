@@ -4,7 +4,6 @@ Permet de détecter des objets par couleur, d'extraire leurs contours/corners, e
 Utilisé pour la perception des obstacles sur la table à partir d'une image caméra.
 """
 
-import pybullet as p
 import cv2
 import numpy as np
 
@@ -110,4 +109,3 @@ def drawObstacles3D(object_corners, image, cam_position, line_color=(0, 1, 0)):
         for j in range(len(transformed_corners)):
             start_point = transformed_corners[j]
             end_point = transformed_corners[(j + 1) % len(transformed_corners)]
-            p.addUserDebugLine(start_point, end_point, line_color, 2)

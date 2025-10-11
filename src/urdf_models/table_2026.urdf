@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+<robot name="playing_area">
+  <!-- Base (floor) -->
+  <link name="floor">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="3.0 2.0 0.005"/>
+      </geometry>
+      <material name="light_gray"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="3.0 2.0 0.005"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="10.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+
+  <!-- Edge wall parameters: thickness = 0.022 m, height = 0.070 m -->
+  <!-- Front edge (positive Y direction) -->
+  <link name="edge_front">
+    <visual>
+      <origin xyz="0 1.0 0.035" rpy="0 0 0"/>
+      <geometry>
+        <box size="3.0 0.022 0.07"/>
+      </geometry>
+      <material name="dark_gray"/>
+    </visual>
+    <collision>
+      <origin xyz="0 1.0 0.035" rpy="0 0 0"/>
+      <geometry>
+        <box size="3.0 0.022 0.07"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="1.0"/>
+      <inertia ixx="0.1" ixy="0.0" ixz="0.0" iyy="0.1" iyz="0.0" izz="0.1"/>
+    </inertial>
+  </link>
+
+  <!-- Back edge (negative Y direction) -->
+  <link name="edge_back">
+    <visual>
+      <origin xyz="0 -1.0 0.035" rpy="0 0 0"/>
+      <geometry>
+        <box size="3.0 0.022 0.07"/>
+      </geometry>
+      <material name="dark_gray"/>
+    </visual>
+    <collision>
+      <origin xyz="0 -1.0 0.035" rpy="0 0 0"/>
+      <geometry>
+        <box size="3.0 0.022 0.07"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="1.0"/>
+      <inertia ixx="0.1" ixy="0.0" ixz="0.0" iyy="0.1" iyz="0.0" izz="0.1"/>
+    </inertial>
+  </link>
+
+  <!-- Right edge (positive X direction) -->
+  <link name="edge_right">
+    <visual>
+      <!-- X = 1.5 - thickness/2 = 1.5 - 0.011 = 1.489 -->
+      <origin xyz="1.489 0 0.035" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.022 2.0 0.07"/>
+      </geometry>
+      <material name="dark_gray"/>
+    </visual>
+    <collision>
+      <origin xyz="1.489 0 0.035" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.022 2.0 0.07"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="1.0"/>
+      <inertia ixx="0.1" ixy="0.0" ixz="0.0" iyy="0.1" iyz="0.0" izz="0.1"/>
+    </inertial>
+  </link>
+
+  <!-- Left edge (negative X direction) -->
+  <link name="edge_left">
+    <visual>
+      <!-- X = -1.5 + thickness/2 = -1.5 + 0.011 = -1.489 -->
+      <origin xyz="-1.489 0 0.035" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.022 2.0 0.07"/>
+      </geometry>
+      <material name="dark_gray"/>
+    </visual>
+    <collision>
+      <origin xyz="-1.489 0 0.035" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.022 2.0 0.07"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="1.0"/>
+      <inertia ixx="0.1" ixy="0.0" ixz="0.0" iyy="0.1" iyz="0.0" izz="0.1"/>
+    </inertial>
+  </link>
+
+  <!-- Fixed joints attaching edges to floor -->
+  <joint name="joint_edge_front" type="fixed">
+    <parent link="floor"/>
+    <child  link="edge_front"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="joint_edge_back" type="fixed">
+    <parent link="floor"/>
+    <child  link="edge_back"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="joint_edge_right" type="fixed">
+    <parent link="floor"/>
+    <child  link="edge_right"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="joint_edge_left" type="fixed">
+    <parent link="floor"/>
+    <child  link="edge_left"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+</robot>

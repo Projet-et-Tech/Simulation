@@ -1,52 +1,39 @@
-import os
-os.environ['PYBULLET_USE_EGL'] = '1'
-import pybullet as p
 import time
 import numpy as np
+import cv2
+import queue
+
 from simulation.grid import Grid
 from simulation.robot import Robot
-from simulation.pathfinding import AStar, DStarLite
+from simulation.camera import (
+    VirtualCamera,
+    NoVirtualCamera,
+    display_images
+)
+from simulation.pathfinding import AStar
 from simulation.pathfollowing import extract_waypoints
-from simulation.pybullet_manager import PyBulletManager
-from simulation.setup import load_objects, create_environment, initialize_map, initialize_cans
-from utils.math_helpers import interpolate_position
+from simulation.simulation import Simulation
+from simulation.setup import initialize_map, initialize_cans
 from utils.visualization import VisualizationMPL
 import config
-from utils.virtualCamera import init_camera, read_camera
-import cv2
-from utils.imageTransform import calibrationAndTransform
 
-def main():
-    # Initialisation de PyBullet
-    # ==========================
-    pybullet_manager = PyBulletManager(debug=config.DEBUG)
-    pybullet_manager.reset_camera(distance=2.0, yaw=0, pitch=-45, target=[0, 0, 0])
-    pybullet_manager.set_real_time_simulation(True)
+def main(fps=1000):
+    # Initialisation de la simulation SAPIEN
+    # =======================================================
+    simulation = Simulation(with_viewer=True)
+    simulation.add_ground()
+    simulation.add_lights()
+    simulation.add_table()
+    simulation.add_cans()
+    simulation.step()
 
-    # Créer l'environnement (sol et table)
-    plane_id, table_id = create_environment(pybullet_manager)
+    cv2.namedWindow("Camera", cv2.WINDOW_NORMAL)
 
-    # Charger les conserves
-    can_ids = load_objects(pybullet_manager, "src/urdf_models/conserve.urdf", [0.7071, 0, 0, 0.7071], config.CAN_POSITIONS)
-
-    # Charger les planches
-    #plank_horizontal_ids = load_objects(pybullet_manager, "src/urdf_models/planche.urdf", [0.7071, 0, 0, 0.7071], config.PLANK_POSITIONS_HORIZONTAL)
-    #plank_vertical_ids = load_objects(pybullet_manager, "src/urdf_models/planche.urdf", [0.5, 0.5, 0.5, 0.5], config.PLANK_POSITIONS_VERTICAL)
-
-    cam1 = init_camera(config.CAM1_POS, config.CAM1_ORIENTATION_DEG)
-    # cam2 = init_camera(config.CAM2_POS, config.CAM2_ORIENTATION_DEG)
-
-    cv2.namedWindow("Camera 1 Stream", cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("Camera 1 Stream", 800, 500)
-    
-    cv2.namedWindow("Camera 2 Stream", cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("Camera 2 Stream", 800, 500)
-
-    print("""
-======================================================
-Fin initialisation pybullet
-======================================================
-    """)
+    camera_1 = NoVirtualCamera(
+        scene=simulation.scene,
+        img_types=['Color'],
+    )
+    camera_1.run()
 
     grid = Grid()
 
@@ -64,22 +51,11 @@ Fin initialisation pybullet
 
     # Initialisation du robot
     real_start = grid.grid_index_to_position(start)
-    robot = Robot("src/urdf_models/robot_cube.urdf", [real_start[0], real_start[1], config.TABLE_HEIGHT + 0.1], [0, 0, 0, 1])
-    pybullet_manager.step_simulation()
+    robot = Robot(scene=simulation.scene, position=[real_start[0], real_start[1], config.ROBOT_START_POS[2]])
 
-    algo = 1 + 0
+    a_star = AStar(ox, oy, spoofed_ox, spoofed_oy)
+    path_exists, pathx, pathy, compute_time = a_star.main(start, goal)
 
-    if algo == 1:
-        # Algorithme A*
-        a_star = AStar(ox, oy, spoofed_ox, spoofed_oy)
-        path_exists, pathx, pathy, compute_time = a_star.main(start, goal)
-    else:
-        # Algorithme D*Lite
-        dstarlite = DStarLite(ox, oy)
-        path_exists, pathx, pathy, compute_time = dstarlite.main(start=start,
-                                                                goal=goal,
-                                                                spoofed_ox=spoofed_ox,
-                                                                spoofed_oy=spoofed_oy)
     if path_exists:
         print("Path found", end=" ")
         print(f"({int(compute_time*1e3)}ms)\n")
@@ -90,60 +66,53 @@ Fin initialisation pybullet
         print(f"({int(compute_time*1e3)}ms)")
         visualization.show_path(path_exists, pathx, pathy, [], [])
 
-    # Gestion du chemin et déplacement du robot
-    if path_exists:
-        print("Following the path :")
+    target_pose = [grid.grid_index_to_position([wpx[main_point_id], wpy[main_point_id]]) \
+        for main_point_id in range(len(wpx))]
+    target_pose_index = 0
 
-        for main_point_id in range(len(wpx)):
-            target_position = (wpx[main_point_id], wpy[main_point_id])
-            x_pos, y_pos, z_pos = grid.grid_index_to_position(target_position)
-            next_pos = (x_pos, y_pos)
+    t0 = time.time()
+    real_fps = 0
+    t_proc = 0
+    while not simulation.viewer.closed:
+        simulation.step()
 
-            while True:
-                robot_pos, _ = robot.get_position_and_orientation()
-                robot_pos_2d = robot_pos[:2]
+        reached, distance = robot.move_to(
+            target_pose[target_pose_index],
+            speed_factor=0.8
+        )
+        if reached and target_pose_index < len(target_pose) - 1:
+            target_pose_index += 1
 
-                # Calculate the direction to the target position
-                delta_x = next_pos[0] - robot_pos_2d[0]
-                delta_y = next_pos[1] - robot_pos_2d[1]
-                distance_to_target = np.sqrt(delta_x**2 + delta_y**2)
+        # Check for captured images (non-blocking)
+        try:
+            processed_images, t_proc = camera_1.image_queue.get_nowait()
+            # Process or store images as needed
+            key = display_images(processed_images)
+        except queue.Empty:
+            pass
 
-                # Normalize the direction and set the velocity
-                if distance_to_target > 0.02:
-                    direction = [delta_x / distance_to_target, delta_y / distance_to_target]
-                    linear_velocity = [config.ROBOT_SPEED * direction[0], config.ROBOT_SPEED * direction[1], 0]
-                    robot.set_velocity(linear_velocity=linear_velocity)
-                else:
-                    print(f"Reached waypoint {main_point_id}: {next_pos}")
-                    # robot.set_velocity([0, 0, 0])
-                    break
-                
-                # Display cameras
-                t0 = time.time()
-                rgb_img1 = read_camera(cam1, divisor=3/4)
-                #rgb_img2 = read_camera(cam2, divisor=1)
-                t1 = time.time()
-                print(f"Camera read time: {(t1 - t0)*1000:.2f} ms", end="\r")
+        # FPS Tracking
+        real_fps += 1
+        current_time = time.time()
+        if current_time - t0 >= 1.0:
+            print(f"FPS: {real_fps} | Processing Time: {t_proc:.4f} seconds", end="\r")
+            real_fps = 0
+            t0 = current_time
 
-                # rgb_img1 = calibrationAndTransform(rgb_img1, 1)
-                # rgb_img2 = calibrationAndTransform(rgb_img2, 2)
-
-                cv2.imshow("Camera 1 Stream", rgb_img1)
-                #cv2.imshow("Camera 2 Stream", rgb_img2)
-
-                c = cv2.waitKey(int(1/60.0*1000))
-
-                pybullet_manager.step_simulation()
-                time.sleep(1 / 60.0)
-        robot.set_velocity([0, 0, 0])
-
-    print("""\n
-======================================================
-
-======================================================
-    """)
-    time.sleep(2)
-    pybullet_manager.disconnect()
+        # Window and exit handling
+        try:
+            if cv2.getWindowProperty("Camera", cv2.WND_PROP_VISIBLE) < 1:
+                break
+            
+            key = cv2.waitKey(1000 // fps) & 0xFF
+            if key == 27:  # ESC key
+                break
+        except Exception:
+            break
+    
+    # Cleanup
+    cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     main()
+    
