@@ -23,6 +23,7 @@ try:
 except Exception as e:
     print(f"IMPORT ERROR ! ({e})")
     print("Run 'make environment' or 'make install' to get the required modules")
+    exit(1)
 
 from simulation.simulation import Simulation
 from simulation.robot import Robot
