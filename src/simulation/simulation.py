@@ -32,22 +32,41 @@ class Simulation():
         table_builder = self.scene.create_actor_builder()
         table_builder.add_convex_collision_from_file(filename="src/urdf_models/table.obj")
         table_material = sapien.render.RenderMaterial()
-        table_material.base_color_texture = sapien.render.RenderTexture2D(filename="src/urdf_models/Vinyle_2025_FINAL.jpg")
+        table_material.base_color_texture = sapien.render.RenderTexture2D(filename="src/urdf_models/Vinyle_2026_FINAL.png")
         table_builder.add_visual_from_file(filename="src/urdf_models/table.obj", material=table_material)
         table = table_builder.build(name="table")
         table.set_pose(sapien.Pose(p=position, q=orientation))
         self.add_actor(table)
 
-    def add_cans(self):
-        can_builder = self.scene.create_actor_builder()
-        can_builder.add_cylinder_collision(radius=config.CAN_RADIUS, half_length=config.CAN_HEIGHT / 2)
-        can_mt = sapien.render.RenderMaterial()
-        can_mt.base_color_texture = sapien.render.RenderTexture2D(filename="src/urdf_models/conserve.png")
-        can_mt.base_color = [0.5, 0.5, 0.5, 1] # Blue color
-        can_builder.add_cylinder_visual(material=can_mt, radius=config.CAN_RADIUS, half_length=config.CAN_HEIGHT / 2)
-        for i, pos in enumerate(config.CAN_POSITIONS):
-            can = can_builder.build(name=f"can_{i}")
-            can.set_pose(sapien.Pose(p=pos, q=[0, 0.707, 0, 0.707]))
+    def add_boxes(self):
+        box_builder = self.scene.create_actor_builder()
+        box_builder.add_box_collision(half_size=[config.BOX_HEIGHT/2, config.BOX_LENGTH/2, config.BOX_WIDTH/2])
+        for i, pos in enumerate(config.BOX_POSITIONS_HORIZONTAL):
+            box_mt = sapien.render.RenderMaterial()
+            choice = self.getRandomBoxColor(i)
+            box_mt.base_color = [0, 91/256, 140/256, 1] if choice == 0 else [247/256, 181/256, 0, 1]
+            box_builder.add_box_visual(material=box_mt, half_size=[config.BOX_HEIGHT/2, config.BOX_LENGTH/2, config.BOX_WIDTH/2])
+            box = box_builder.build(name=f"box_{i}")
+            box.set_pose(sapien.Pose(p=pos, q=[-0.5, 0.5, 0.5, 0.5]))
+        for i, pos in enumerate(config.BOX_POSITIONS_VERTICAL):
+            box_mt = sapien.render.RenderMaterial()
+            choice = self.getRandomBoxColor(i)
+            box_mt.base_color = [0, 91/256, 140/256, 1] if choice == 0 else [247/256, 181/256, 0, 1]
+            box_builder.add_box_visual(material=box_mt, half_size=[config.BOX_HEIGHT/2, config.BOX_LENGTH/2, config.BOX_WIDTH/2])
+            box = box_builder.build(name=f"box_{i}")
+            box.set_pose(sapien.Pose(p=pos, q=[0.707, 0, 0.707, 0]))
+
+    def getRandomBoxColor(self, i):
+        if not hasattr(self, "_box_color_permutations"):
+            self._box_color_permutations = {}
+        block = i // 4
+        idx_in_block = i % 4
+        if block not in self._box_color_permutations:
+            perm = [0, 0, 1, 1]
+            rng = np.random.RandomState()
+            rng.shuffle(perm)
+            self._box_color_permutations[block] = perm
+        return self._box_color_permutations[block][idx_in_block]
 
     def add_lights(self):
         self.scene.set_ambient_light([0.5, 0.5, 0.5])

@@ -41,7 +41,7 @@ def main(fps=1000):
     simulation.add_ground()
     simulation.add_lights()
     simulation.add_table()
-    simulation.add_cans()
+    simulation.add_boxes()
 
     robot = Robot(scene=simulation.scene)
 
