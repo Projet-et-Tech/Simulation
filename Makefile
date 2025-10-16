@@ -10,10 +10,27 @@ install:
 # Set up development environment
 environment:
 	@echo "> Creating virtual environment"
-	@if ! command -v python3-venv &> /dev/null || ! command -v python3-tk &> /dev/null; then \
-		echo "> Installing required system packages"; \
-		sudo apt-get update; \
-		sudo apt-get install python3-venv python3-tk -y; \
+	@if [[ "$(uname)" == "Linux" ]]; then \
+		if command -v pacman &> /dev/null; then \
+			echo "> Installing required system packages for Arch"; \
+			sudo pacman -Syu python-virtualenv python-tk --noconfirm; \
+		elif command -v apt-get &> /dev/null; then \
+			echo "> Installing required system packages for Debian/Ubuntu"; \
+			sudo apt-get update; \
+			sudo apt-get install python3-venv python3-tk -y; \
+		else \
+			echo "> Unsupported Linux distribution"; \
+			exit 1; \
+		fi \
+	elif [[ "$(uname)" == "Darwin" ]]; then \
+		echo "> macOS detected, ensure Python 3 and venv are installed"; \
+	elif [[ "$(uname -o)" == "Msys" ]]; then \
+		echo "> Windows detected"; \
+		echo "> You might want to install required Python packages manually"; \
+		@echo "> Make sure Python 3 is added to your PATH."; \
+	else \
+		echo "> Unsupported OS"; \
+		exit 1; \
 	fi
 	@python3 -m venv .venv
 	@echo "> Activating virtual environment and installing dependencies"
