@@ -1,5 +1,4 @@
 sapien
-pybullet
 matplotlib
 numpy
 opencv-python
