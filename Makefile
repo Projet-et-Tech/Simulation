@@ -3,6 +3,9 @@
 # Default target
 all: environment
 
+# OS detection
+OS := $(shell uname -s)
+
 # Install dependencies
 install:
 	pip install -r requirements.txt
@@ -10,27 +13,27 @@ install:
 # Set up development environment
 environment:
 	@echo "> Creating virtual environment"
-	@if [[ "$(uname)" == "Linux" ]]; then \
-		if command -v pacman &> /dev/null; then \
-			echo "> Installing required system packages for Arch"; \
-			sudo pacman -Syu python-virtualenv python-tk --noconfirm; \
-		elif command -v apt-get &> /dev/null; then \
-			echo "> Installing required system packages for Debian/Ubuntu"; \
-			sudo apt-get update; \
-			sudo apt-get install python3-venv python3-tk -y; \
+	@if ! command -v python3-venv &> /dev/null || ! command -v python3-tk &> /dev/null; then \
+		echo "> Installing required system packages"; \
+		if [[ "$(OS)" == "Linux" ]]; then \
+			if [[ -f /etc/arch-release ]]; then \
+				echo "> Installing for Arch Linux"; \
+				sudo pacman -S python-virtualenv python-tk -y; \
+			else \
+				echo "> Assuming Ubuntu/Debian"; \
+				sudo apt-get update; \
+				sudo apt-get install python3-venv python3-tk -y; \
+			fi \
+		elif [[ "$(OS)" == "Darwin" ]]; then \
+			echo "> Installing for macOS"; \
+			brew install python; \
+		elif [[ "$(OS)" == "CYGWIN"* || "$(OS)" == "MINGW"* || "$(OS)" == "MSYS"* ]]; then \
+			echo "> Installing for Windows"; \
+			echo "> Ensure Python and pip are installed"; \
 		else \
-			echo "> Unsupported Linux distribution"; \
+			echo "> Unsupported OS: $(OS)"; \
 			exit 1; \
 		fi \
-	elif [[ "$(uname)" == "Darwin" ]]; then \
-		echo "> macOS detected, ensure Python 3 and venv are installed"; \
-	elif [[ "$(uname -o)" == "Msys" ]]; then \
-		echo "> Windows detected"; \
-		echo "> You might want to install required Python packages manually"; \
-		@echo "> Make sure Python 3 is added to your PATH."; \
-	else \
-		echo "> Unsupported OS"; \
-		exit 1; \
 	fi
 	@python3 -m venv .venv
 	@echo "> Activating virtual environment and installing dependencies"
