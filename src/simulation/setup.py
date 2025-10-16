@@ -1,4 +1,3 @@
-import pybullet as p
 from config import TABLE_HEIGHT, CAN_POSITIONS, PLANK_POSITIONS_HORIZONTAL, PLANK_POSITIONS_VERTICAL
 import config
 
