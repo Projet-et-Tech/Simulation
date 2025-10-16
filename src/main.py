@@ -2,7 +2,8 @@ import os
 
 host = ""
 for host_var in ['SESSION_MANAGER', 'HOSTNAME']:
-    host = os.environ[host_var].split(',')[0].split(':')[0].split('/')[1] 
+    if host_var in os.environ:
+        host = os.environ[host_var].split(',')[0].split(':')[0].split('/')[1] 
 print(f"Current host: {host}")
 if host == 'PT-PC-OptiPlex-7060':
     print("""
