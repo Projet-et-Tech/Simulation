@@ -42,7 +42,7 @@ ifeq ($(DETECTED_OS),Linux)
     ifeq ($(LINUX_DISTRO),arch)
 		@if ! command -v python-venv &> /dev/null || ! command -v tk &> /dev/null; then \
 			echo "> Installing required system packages for Arch Linux"; \
-			sudo pacman -S --noconfirm python-venv tk; \
+			sudo pacman -S --noconfirm python; \
 		fi
     else
 		@if ! command -v python3-venv &> /dev/null || ! command -v python3-tk &> /dev/null; then \
