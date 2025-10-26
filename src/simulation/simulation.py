@@ -12,7 +12,7 @@ class Simulation():
     def __init__(self, timestep=1e-2, with_viewer=True):
         self.scene = sapien.Scene()
         self.scene.set_timestep(timestep)
-        self.actors = []
+        self.actors = {}
 
         if with_viewer:
             self.viewer = self.scene.create_viewer()
@@ -25,8 +25,11 @@ class Simulation():
     def add_ground(self, altitude=0):
         self.scene.add_ground(altitude=altitude)
 
-    def add_actor(self, actor):
-        self.actors.append(actor)
+    def add_actor(self, actor_type, actor):
+        if actor_type in self.actors:
+            self.actors[actor_type].append(actor)
+        else:
+            self.actors[actor_type] = [actor]
 
     def add_table(self, position=[0,0,0.025], orientation=[0,0,0.707,0.707]):
         table_builder = self.scene.create_actor_builder()
@@ -36,11 +39,12 @@ class Simulation():
         table_builder.add_visual_from_file(filename="src/urdf_models/table.obj", material=table_material)
         table = table_builder.build(name="table")
         table.set_pose(sapien.Pose(p=position, q=orientation))
-        self.add_actor(table)
+        self.add_actor('table', table)
 
     def add_boxes(self):
         box_builder = self.scene.create_actor_builder()
         box_builder.add_box_collision(half_size=[config.BOX_HEIGHT/2, config.BOX_LENGTH/2, config.BOX_WIDTH/2])
+
         for i, pos in enumerate(config.BOX_POSITIONS_HORIZONTAL):
             box_mt = sapien.render.RenderMaterial()
             choice = self.getRandomBoxColor(i)
@@ -48,6 +52,8 @@ class Simulation():
             box_builder.add_box_visual(material=box_mt, half_size=[config.BOX_HEIGHT/2, config.BOX_LENGTH/2, config.BOX_WIDTH/2])
             box = box_builder.build(name=f"box_{i}")
             box.set_pose(sapien.Pose(p=pos, q=[-0.5, 0.5, 0.5, 0.5]))
+            self.add_actor('box', box)
+
         for i, pos in enumerate(config.BOX_POSITIONS_VERTICAL):
             box_mt = sapien.render.RenderMaterial()
             choice = self.getRandomBoxColor(i)
@@ -55,6 +61,7 @@ class Simulation():
             box_builder.add_box_visual(material=box_mt, half_size=[config.BOX_HEIGHT/2, config.BOX_LENGTH/2, config.BOX_WIDTH/2])
             box = box_builder.build(name=f"box_{i}")
             box.set_pose(sapien.Pose(p=pos, q=[0.707, 0, 0.707, 0]))
+            self.add_actor('box', box)
 
     def getRandomBoxColor(self, i):
         if not hasattr(self, "_box_color_permutations"):
