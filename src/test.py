@@ -22,7 +22,11 @@ try:
     import queue
 except Exception as e:
     print(f"IMPORT ERROR ! ({e})")
-    print("Run 'make environment' or 'make install' to get the required modules")
+    print("""
+> Run 'make environment' to setup the python venv and install the required modules
+
+> Run 'make install' to install the required modules
+     """)
     exit(1)
 
 from simulation.simulation import Simulation
