@@ -37,7 +37,7 @@ import config
 
 def main(fps=1000):
     # Initialize SAPIEN engine
-    simulation = Simulation(with_viewer=True)
+    simulation = Simulation(with_viewer=False)
     simulation.add_ground()
     simulation.add_lights()
     simulation.add_table()
@@ -47,9 +47,9 @@ def main(fps=1000):
 
     cv2.namedWindow("Camera", cv2.WINDOW_NORMAL)
 
-    camera_1 = NoVirtualCamera(
+    camera_1 = VirtualCamera(
         scene=simulation.scene,
-        img_types=['Color'],
+        img_types=['Depth'], # 'Depth', 'Segmentation', 'Color'
     )
     camera_1.run()
 
