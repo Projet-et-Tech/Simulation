@@ -12,7 +12,7 @@ class Simulation():
     def __init__(self, timestep=1e-2, with_viewer=True):
         self.scene = sapien.Scene()
         self.scene.set_timestep(timestep)
-        self.actors = {}
+        self.actors = []
 
         if with_viewer:
             self.viewer = self.scene.create_viewer()
@@ -25,45 +25,41 @@ class Simulation():
     def add_ground(self, altitude=0):
         self.scene.add_ground(altitude=altitude)
 
-    def add_actor(self, actor_type, actor):
-        if actor_type in self.actors:
-            self.actors[actor_type].append(actor)
-        else:
-            self.actors[actor_type] = [actor]
+    def add_actor(self, actor):
+        self.actors.append(actor)
 
-    def add_table(self, position=[0,0,0.025], orientation=[0,0,0.707,0.707]):
-        table_builder = self.scene.create_actor_builder()
-        table_builder.add_convex_collision_from_file(filename="src/urdf_models/table.obj")
-        table_material = sapien.render.RenderMaterial()
-        table_material.base_color_texture = sapien.render.RenderTexture2D(filename="src/urdf_models/Vinyle_2026_FINAL.png")
-        table_builder.add_visual_from_file(filename="src/urdf_models/table.obj", material=table_material)
-        table = table_builder.build(name="table")
-        table.set_pose(sapien.Pose(p=position, q=orientation))
-        self.add_actor('table', table)
+    def add_table(self, position=[0,0,0.025], orientation=[0, 0, 0, 1]):
+        loader = self.scene.create_urdf_loader()
+        table_collision = loader.load("src/urdf_models/table_2026.urdf")
+        table_collision.set_pose(sapien.Pose(p=position, q=orientation))
+        
+        # table_builder = self.scene.create_actor_builder()
+        # table_builder.add_nonconvex_collision_from_file(filename="src/urdf_models/table.obj")
+        # table_material = sapien.render.RenderMaterial()
+        # table_material.base_color_texture = sapien.render.RenderTexture2D(filename="src/urdf_models/Vinyle_2026_FINAL.png")
+        # table_builder.add_visual_from_file(filename="src/urdf_models/table.obj", material=table_material)
+        # table = table_builder.build(name="table")
+        # table.set_pose(sapien.Pose(p=position, q=orientation))
+        # self.add_actor(table)
 
     def add_boxes(self):
         box_builder = self.scene.create_actor_builder()
-        box_builder.add_box_collision(half_size=[config.BOX_HEIGHT/2, config.BOX_LENGTH/2, config.BOX_WIDTH/2])
-
+        box_builder.add_convex_collision_from_file(filename="src/urdf_models/caisse_couleur.obj")
+        box_material = sapien.render.RenderMaterial()
+        box_material.base_color_texture = sapien.render.RenderTexture2D(filename="src/urdf_models/game_elements_2026_FINAL.png")
+        box_builder.add_visual_from_file(filename="src/urdf_models/caisse_couleur.obj", material=box_material)
         for i, pos in enumerate(config.BOX_POSITIONS_HORIZONTAL):
-            box_mt = sapien.render.RenderMaterial()
-            choice = self.getRandomBoxColor(i)
-            box_mt.base_color = [0, 91/256, 140/256, 1] if choice == 0 else [247/256, 181/256, 0, 1]
-            box_builder.add_box_visual(material=box_mt, half_size=[config.BOX_HEIGHT/2, config.BOX_LENGTH/2, config.BOX_WIDTH/2])
             box = box_builder.build(name=f"box_{i}")
-            box.set_pose(sapien.Pose(p=pos, q=[-0.5, 0.5, 0.5, 0.5]))
-            self.add_actor('box', box)
-
+            choice = self.get_randomBoxColor(i)
+            rotation = [0, 0, 0.707, 0.707] if choice == 0 else [0, 0, -0.707, 0.707]
+            box.set_pose(sapien.Pose(p=pos, q=rotation))
         for i, pos in enumerate(config.BOX_POSITIONS_VERTICAL):
-            box_mt = sapien.render.RenderMaterial()
-            choice = self.getRandomBoxColor(i)
-            box_mt.base_color = [0, 91/256, 140/256, 1] if choice == 0 else [247/256, 181/256, 0, 1]
-            box_builder.add_box_visual(material=box_mt, half_size=[config.BOX_HEIGHT/2, config.BOX_LENGTH/2, config.BOX_WIDTH/2])
             box = box_builder.build(name=f"box_{i}")
-            box.set_pose(sapien.Pose(p=pos, q=[0.707, 0, 0.707, 0]))
-            self.add_actor('box', box)
+            choice = self.get_randomBoxColor(i)
+            rotation = [0.5, 0.5, 0.5, 0.5] if choice == 0 else [-0.5, 0.5, -0.5, 0.5]
+            box.set_pose(sapien.Pose(p=pos, q=rotation))
 
-    def getRandomBoxColor(self, i):
+    def get_randomBoxColor(self, i):
         if not hasattr(self, "_box_color_permutations"):
             self._box_color_permutations = {}
         block = i // 4
