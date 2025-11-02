@@ -1,4 +1,4 @@
-from config import TABLE_HEIGHT, CAN_POSITIONS, PLANK_POSITIONS_HORIZONTAL, PLANK_POSITIONS_VERTICAL
+from config import BOX_POSITIONS_HORIZONTAL, BOX_POSITIONS_VERTICAL
 import config
 
 def edge(xmin, xmax, ymin, ymax):
@@ -45,7 +45,7 @@ def initialize_cans(grid, can_radius):
     cell_size = grid.cell_size
     ox_cans, oy_cans = [], []
 
-    for pos in CAN_POSITIONS:
+    for pos in BOX_POSITIONS_VERTICAL + BOX_POSITIONS_HORIZONTAL:
         oy_can, ox_can = grid.mark_can_on_grid(pos, can_radius)
         ox_cans.extend(ox_can)
         oy_cans.extend(oy_can)
