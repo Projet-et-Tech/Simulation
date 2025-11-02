@@ -30,8 +30,34 @@ from simulation.camera import (
     VirtualCamera,
     display_images
 )
+import re
 
-def main(fps=1000, show_camera=False, show_render=True):
+
+def parse_instruction_file(path):
+    """Parse a simple instruction file containing lines like:
+    MOVETO [x, y]
+    Returns a list of (cmd, args) tuples.
+    """
+    instructions = []
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            for raw in f:
+                line = raw.strip()
+                if not line or line.startswith('#'):
+                    continue
+                # accept either space-separated or comma-separated values, e.g. "MOVETO [1.25 0]" or "MOVETO [1.25, 0]"
+                m = re.match(r"MOVETO\s*\[\s*([\-0-9.eE+]+)\s*(?:,\s*|\s+)([\-0-9.eE+]+)\s*\]", line)
+                if m:
+                    x = float(m.group(1))
+                    y = float(m.group(2))
+                    instructions.append(('MOVETO', [x, y]))
+                else:
+                    print(f"Unrecognized instruction line: {line}")
+    except FileNotFoundError:
+        print(f"Instruction file not found: {path}")
+    return instructions
+
+def main(fps=1000, show_camera=False, show_render=True, instruction_file="src/routine.txt"):
     """Run the simulation.
 
     Args:
@@ -58,14 +84,30 @@ def main(fps=1000, show_camera=False, show_render=True):
         )
         camera_1.run()
 
+    # Load instructions
+    instructions = parse_instruction_file(instruction_file) if instruction_file else []
+    current_inst = 0
+
     real_fps = 0
     t0 = time.time()
     t_proc = 0
     while not simulation.viewer.closed:
         simulation.step()
 
-        target_pose = [1.25, 0]
-        robot.move_to(target_pose, speed_factor=0.5)
+        # Execute instructions sequentially
+        if current_inst < len(instructions):
+            cmd, args = instructions[current_inst]
+            if cmd == 'MOVETO':
+                reached, dist = robot.move_to(args, speed_factor=0.5)
+                if reached:
+                    print(f"Reached target {args} (dist={dist:.4f})")
+                    current_inst += 1
+            else:
+                print(f"Unknown command: {cmd}")
+                current_inst += 1
+        else:
+            # No instruction: keep robot stopped
+            robot.move_to([robot.get_pose().p[0], robot.get_pose().p[1]], speed_factor=0.0)
 
         # Check for captured images (non-blocking) when camera is enabled
         if show_camera and camera_1 is not None:
