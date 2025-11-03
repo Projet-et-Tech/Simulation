@@ -20,7 +20,11 @@ Elle contient également la simulation de la détection caméra et de la calibra
   - `utils/`: Fonctions utilitaires pour la vision, la transformation d'image, la segmentation, la détection Aruco, etc.
   - `urdf_models/`: Modèles URDF des objets, obstacles, table et robots utilisés dans la simulation.
   - `config.py`: Constantes globales de la simulation (dimensions, positions, IDs, ...).
-
+  - `routine.txt`: Liste d'instructions à réaliser pour une routine fixe.
+ 
+## Détails routine 
+Dans le fichier routine.txt seules les instructions suivantes sont prises en comptes :
+- `MOVETO [x, y]` : déplacement du robot à la position absolue donnée (position actuelle connue)
 
 ## Principe
 
@@ -49,8 +53,7 @@ Cette imagerie est réalisée grâce à la bibliothèque OpenCV sur python.
 ### Structure des fichiers importants
 
 - `main.py` : Point d'entrée principal pour la simulation pathfinding.
-- `mainCameraSimu.py` : Simulation de la détection caméra et de la calibration par Aruco dans l'environnement de simulation.
-- `mainCameraReel.py` : Utilisation de la détection caméra et de la calibration par Aruco en vrai.
+- `test.py` : Point d'entrée du développement des systèmes de vision.
 
 ## Dépendances
 
@@ -61,7 +64,7 @@ Cette imagerie est réalisée grâce à la bibliothèque OpenCV sur python.
 - matplotlib
 
 ## Auteurs
-N'hésitez à compltéter les différentes documentations au fur et à mesure de vos découvertes.
+N'hésitez à compléter les différentes documentations au fur et à mesure de vos découvertes.
 
 - Ruben (septembre 2025)
 - Alexin (present)
