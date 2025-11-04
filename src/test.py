@@ -1,15 +1,15 @@
-import os
+# import os
 
-host = os.environ['SESSION_MANAGER'].split(',')[0].split(':')[0].split('/')[1]
-print(f"Current host: {host}")
-if host == 'PT-PC-OptiPlex-7060':
-    print("""
-#################################################
-########  Le CPU ne tient pas la charge  ########
-#################################################
-    """)
-    # Set the VK_ICD_FILENAMES environment variable
-    os.environ['VK_ICD_FILENAMES'] = '/usr/share/vulkan/icd.d/lvp_icd.x86_64.json'
+# host = os.environ['SESSION_MANAGER'].split(',')[0].split(':')[0].split('/')[1]
+# print(f"Current host: {host}")
+# if host == 'PT-PC-OptiPlex-7060':
+#     print("""
+# #################################################
+# ########  Le CPU ne tient pas la charge  ########
+# #################################################
+#     """)
+#     # Set the VK_ICD_FILENAMES environment variable
+#     os.environ['VK_ICD_FILENAMES'] = '/usr/share/vulkan/icd.d/lvp_icd.x86_64.json'
 
 try:
     import time
@@ -73,7 +73,8 @@ def main(fps=1000, show_camera=False, show_render=True, instruction_file="src/ro
     simulation.add_boxes()
 
     # Initialize robot
-    robot = Robot(scene=simulation.scene)
+    start_pose = [1.25, -0.75, 0.1]
+    robot = Robot(scene=simulation.scene, position=start_pose)
 
     camera_1 = None
     if show_camera:
