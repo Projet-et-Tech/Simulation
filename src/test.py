@@ -30,32 +30,7 @@ from simulation.camera import (
     VirtualCamera,
     display_images
 )
-import re
-
-
-def parse_instruction_file(path):
-    """Parse a simple instruction file containing lines like:
-    MOVETO [x, y]
-    Returns a list of (cmd, args) tuples.
-    """
-    instructions = []
-    try:
-        with open(path, 'r', encoding='utf-8') as f:
-            for raw in f:
-                line = raw.strip()
-                if not line or line.startswith('#'):
-                    continue
-                # accept either space-separated or comma-separated values, e.g. "MOVETO [1.25 0]" or "MOVETO [1.25, 0]"
-                m = re.match(r"MOVETO\s*\[\s*([\-0-9.eE+]+)\s*(?:,\s*|\s+)([\-0-9.eE+]+)\s*\]", line)
-                if m:
-                    x = float(m.group(1))
-                    y = float(m.group(2))
-                    instructions.append(('MOVETO', [x, y]))
-                else:
-                    print(f"Unrecognized instruction line: {line}")
-    except FileNotFoundError:
-        print(f"Instruction file not found: {path}")
-    return instructions
+from simulation.instructions import parse_instruction_file
 
 def main(fps=1000, show_camera=False, show_render=True, instruction_file="src/routine.txt"):
     """Run the simulation.
