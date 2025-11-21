@@ -24,13 +24,49 @@ Le code est organisé en plusieurs modules pour faciliter la maintenance et la c
 - `utils/perspectiveCorrection.py` : Gère la correction de perspective des positions capturées.
 - `utils/arucoDetection.py` : Implémente la détection des marqueurs ArUco.
 - `utils/imageTransform.py` : Contient des fonctions utilitaires pour la transformation de perspective de la table.
-
+- 
 
 ## Initialisation et configuration des caméras
 Les caméras doivent respecter certaines contraintes de position (fixée par le réglement de la Coupe de France de Robotique), de plus nous avons des exigences supplémentaires : voir la table en entier, avoir une bonne résolution, et minimiser les occlusions. Pour cela nous avons choisi 2 caméras placées en hauteur aux coins opposés de la table, inclinées vers le centre.
 
 Les caméras virtuelles sont paramétrées pour correspondre aux caractéristiques des caméras réelles utilisées (FOV, position, orientation).
 
+## Connexion à la caméra
+On connecte un module déporté (un ordinateur) à la caméra raspberry via SSH, le flux vidéo est transmis par Wi-Fi en partage de connexion (impossible avec eduroam, possible avec Wi-Fi Projet&Tech mais pas connecté à Internet).
+Ci dessous les étapes de configuration de la connexion :
+- **initialisation de la carte** : On charge un environnement sur la carte avec *Raspberry Pi Imager* sur la micro-SD en indiquant le **nom** et le **mot-de-passe** du partage de connexion. Attention au nom d'utilistaeur et mot de passe
+- **connexion au partage** : Brancher la carte et attendre la connexion au partage
+- **connexion SSH** : sur un terminal `ping raspberry.local -4` puis `ssh user@ip`, la connexion est établie
+- **configuration vidéo**
+Sur la RPi, dans `config-vid.txt` (avec nano par exemple) :
+
+```
+timeout=0
+nopreview=
+inline=
+listen=
+width=1280
+height=720
+
+codec=h264
+level=4.2
+bitrate=2048000
+denoise=cdn_fast
+framerate=30
+profile=high
+metering=spot
+
+autofocus-mode=continuous
+autofocus-speed=fast
+```
+
+Puis, toujours sur RPi :
+
+```bash
+rpicam-vid -c ~/config-vid.txt -o tcp://0.0.0.0:5001
+```
+
+Ensuite on peu lancer le code python (attention à bien modifier l'ip dans `RTSP_URL = 'tcp://192.168.114.241:5001'`
 
 ## Correction de perspective
 Pour obtenir une vue "de dessus" de la table, nous appliquons une transformation de perspective aux images capturées. Cela permet de compenser l'angle d'inclinaison des caméras et de faciliter la détection des objets sur la table. La transformation s'appuie sur les 4 codes ArUco placés aux coins de la table. La transformation suit les étapes suivantes :
