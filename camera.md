@@ -66,7 +66,7 @@ Puis, toujours sur RPi :
 rpicam-vid -c ~/config-vid.txt -o tcp://0.0.0.0:5001
 ```
 
-Ensuite on peu lancer le code python (attention à bien modifier l'ip dans `RTSP_URL = 'tcp://192.168.114.241:5001'`
+Ensuite on peut lancer le code python (attention à bien modifier l'ip dans `RTSP_URL = 'tcp://192.168.114.241:5001'`
 
 ## Correction de perspective
 Pour obtenir une vue "de dessus" de la table, nous appliquons une transformation de perspective aux images capturées. Cela permet de compenser l'angle d'inclinaison des caméras et de faciliter la détection des objets sur la table. La transformation s'appuie sur les 4 codes ArUco placés aux coins de la table. La transformation suit les étapes suivantes :
