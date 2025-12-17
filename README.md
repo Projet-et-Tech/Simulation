@@ -55,7 +55,7 @@ Cette imagerie est réalisée grâce à la bibliothèque OpenCV sur python.
 ## Dépendances
 
 - Python 3.8+
-- pybullet
+- sapien
 - numpy
 - opencv-python
 - matplotlib
@@ -63,5 +63,5 @@ Cette imagerie est réalisée grâce à la bibliothèque OpenCV sur python.
 ## Auteurs
 N'hésitez à compltéter les différentes documentations au fur et à mesure de vos découvertes.
 
-- Ruben (septembre 2025)
-- Alexin (present)
+- Ruben
+- Alexin
