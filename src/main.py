@@ -45,7 +45,7 @@ def main(fps=1000):
     simulation.add_ground()
     simulation.add_lights()
     simulation.add_table()
-    simulation.add_cans()
+    simulation.add_boxes()
     simulation.step()
 
     cv2.namedWindow("Camera", cv2.WINDOW_NORMAL)
@@ -60,7 +60,7 @@ def main(fps=1000):
 
     # Obstacles
     ox, oy = initialize_map(grid)
-    ox_cans, oy_cans = initialize_cans(grid, config.CAN_RADIUS+config.ROBOT_RADIUS)
+    ox_cans, oy_cans = initialize_cans(grid, config.BOX_LENGTH+config.ROBOT_RADIUS)
     spoofed_ox, spoofed_oy = [ox_cans], [oy_cans]
     obstacles = [ox, oy, spoofed_ox, spoofed_oy]
     

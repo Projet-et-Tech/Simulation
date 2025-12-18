@@ -24,8 +24,9 @@ def normalize_image(img, min_val=0, max_val=255):
 
 def display_images(processed_images):
     # Choose which image to display
-    img = processed_images['camera_color']
-    
+    img_type = list(processed_images.keys())[0]
+    img = processed_images[img_type]
+
     # Normalize and convert
     img = normalize_image(img).astype("uint8")
     img = cv2.cvtColor(img, cv2.COLOR_RGBA2BGRA)
@@ -83,17 +84,17 @@ class VirtualCamera:
                 self.camera.take_picture()
                 rgba_camera = self.camera.get_picture('Color')
                 camera_color = np.clip(rgba_camera * 255, 0, 255).astype(np.uint8)
-                processed_dict['camera_color'] = camera_color
+                processed_dict['Color'] = camera_color
             elif img_type == 'Depth':
                 self.camera.take_picture()
                 position = self.camera.get_picture('Position')
                 depth = (-position[..., 2] * 1000.0).astype(np.uint16)
-                processed_dict['camera_depth'] = depth
+                processed_dict['Depth'] = depth
             elif img_type == 'Segmentation':
                 self.camera.take_picture()
                 seg_labels = self.camera.get_picture('Segmentation')
                 segmentation = seg_labels[..., 0].astype(np.uint32)
-                processed_dict['camera_segmentation'] = segmentation
+                processed_dict['Segmentation'] = segmentation
             else:
                 raise ValueError(f"Unsupported image type: {img_type}")
         

@@ -1,6 +1,9 @@
 import os
 
-host = os.environ['SESSION_MANAGER'].split(',')[0].split(':')[0].split('/')[1]
+host = ""
+for host_var in ['SESSION_MANAGER', 'HOSTNAME']:
+    if host_var in os.environ:
+        host = os.environ[host_var].split(',')[0].split(':')[0].split('/')[1] 
 print(f"Current host: {host}")
 if host == 'PT-PC-OptiPlex-7060':
     print("""
@@ -13,45 +16,56 @@ if host == 'PT-PC-OptiPlex-7060':
 
 try:
     import time
-    import sapien
-    from sapien.utils import Viewer
-    import numpy as np
-    import quaternion
     import cv2
-    import threading
     import queue
 except Exception as e:
     print(f"IMPORT ERROR ! ({e})")
-    print("Run 'make environment' or 'make install' to get the required modules")
+    print("""
+> Run 'make environment' to setup the python venv and install the required modules
+
+> Run 'make install' to install the required modules
+     """)
     exit(1)
 
 from simulation.simulation import Simulation
 from simulation.robot import Robot
 from simulation.camera import (
     VirtualCamera,
-    NoVirtualCamera,
     display_images
 )
-import config
+from simulation.instructions import parse_instruction_file
 
+def main(fps=1000, show_camera=False, show_render=True, instruction_file="src/routine.txt"):
+    """Run the simulation.
 
-def main(fps=1000):
-    # Initialize SAPIEN engine
-    simulation = Simulation(with_viewer=True)
+    Args:
+        fps: main-loop target frames per second for the UI waitKey.
+        show_camera: if True, start the virtual camera and display the camera window.
+        show_render: if True, create and show the SAPIEN viewer (render window).
+    """
+    # Initialize SAPIEN engine. Viewer presence depends on show_render.
+    simulation = Simulation(with_viewer=show_render)
     simulation.add_ground()
     simulation.add_lights()
     simulation.add_table()
     simulation.add_boxes()
 
-    robot = Robot(scene=simulation.scene)
+    # Initialize robot
+    start_pose = [1.25, -0.75, 0.1]
+    robot = Robot(scene=simulation.scene, position=start_pose)
 
-    cv2.namedWindow("Camera", cv2.WINDOW_NORMAL)
+    camera_1 = None
+    if show_camera:
+        cv2.namedWindow("Camera", cv2.WINDOW_NORMAL)
+        camera_1 = VirtualCamera(
+            scene=simulation.scene,
+            img_types=['Depth'], # 'Depth', 'Segmentation', 'Color'
+        )
+        camera_1.run()
 
-    camera_1 = NoVirtualCamera(
-        scene=simulation.scene,
-        img_types=['Color'],
-    )
-    camera_1.run()
+    # Load instructions
+    instructions = parse_instruction_file(instruction_file) if instruction_file else []
+    current_inst = 0
 
     real_fps = 0
     t0 = time.time()
@@ -59,16 +73,29 @@ def main(fps=1000):
     while not simulation.viewer.closed:
         simulation.step()
 
-        target_pose = [0.025, 0.5]
-        robot.move_to(target_pose, speed_factor=0.5)
+        # Execute instructions sequentially
+        if current_inst < len(instructions):
+            cmd, args = instructions[current_inst]
+            if cmd == 'MOVETO':
+                reached, dist = robot.move_to(args, speed_factor=0.5)
+                if reached:
+                    print(f"Reached target {args} (dist={dist:.4f})")
+                    current_inst += 1
+            else:
+                print(f"Unknown command: {cmd}")
+                current_inst += 1
+        else:
+            # No instruction: keep robot stopped
+            robot.move_to([robot.get_pose().p[0], robot.get_pose().p[1]], speed_factor=0.0)
 
-        # Check for captured images (non-blocking)
-        try:
-            processed_images, t_proc = camera_1.image_queue.get_nowait()
-            # Process or store images as needed
-            key = display_images(processed_images)
-        except queue.Empty:
-            pass
+        # Check for captured images (non-blocking) when camera is enabled
+        if show_camera and camera_1 is not None:
+            try:
+                processed_images, t_proc = camera_1.image_queue.get_nowait()
+                # Process or store images as needed
+                key = display_images(processed_images)
+            except queue.Empty:
+                pass
 
         # FPS Tracking
         real_fps += 1
@@ -80,9 +107,11 @@ def main(fps=1000):
         
         # Window and exit handling
         try:
-            if cv2.getWindowProperty("Camera", cv2.WND_PROP_VISIBLE) < 1:
-                break
-            
+            if show_camera:
+                # If camera window is visible, allow camera window close to exit
+                if cv2.getWindowProperty("Camera", cv2.WND_PROP_VISIBLE) < 1:
+                    break
+            # Use waitKey for both camera and render UI responsiveness
             key = cv2.waitKey(1000 // fps) & 0xFF
             if key == 27:  # ESC key
                 break
