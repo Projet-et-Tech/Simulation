@@ -4,7 +4,9 @@ import sapien
 import cv2
 import threading
 import queue
+import numba
 
+@numba.njit(fastmath=True, cache=True)
 def normalize_image(img, min_val=0, max_val=255):
     """Flexible image normalization with custom range."""
     if img.size == 0:
@@ -48,19 +50,29 @@ class VirtualCamera:
         scene,
         near=0.1,
         far=100,
-        fovy=np.deg2rad(35),
+        fovy=np.deg2rad(60),
         width=1920,
         height=1080,
-        position=[-4, 0, 3],
+        position=[1.5, 0, 1],
+        look_at=[-1, 0, -1],
         img_types=['Color', 'Depth', 'Segmentation']
         ):
         self.img_types = img_types
-        # Compute the camera pose by specifying forward(x), left(y) and up(z)
+        
+        # Convert position and look_at to numpy arrays
         cam_pos = np.array(position)
-        forward = -cam_pos / np.linalg.norm(cam_pos)
-        left = np.cross([0, 0, 1], forward)
+        look_direction = np.array(look_at)
+        
+        # Compute forward vector from camera position to look point
+        forward = look_direction / np.linalg.norm(look_direction)
+        
+        # Choose an up vector that allows looking under the camera
+        # Using [1, 0, 0] as reference up vector for more flexibility
+        left = np.cross([1, 0, 0], forward)
         left = left / np.linalg.norm(left)
         up = np.cross(forward, left)
+
+        # Create transformation matrix
         mat44 = np.eye(4)
         mat44[:3, :3] = np.stack([forward, left, up], axis=1)
         mat44[:3, 3] = cam_pos
@@ -76,6 +88,11 @@ class VirtualCamera:
         self.camera.entity.set_pose(sapien.Pose(mat44))
         self.camera.take_picture()
 
+        # Rotate images based on camera position
+        self.rotate_images = False
+        if cam_pos[0] > 0:
+            self.rotate_images = True
+
     def optimized_image_capture(self):
         """Capture and process images from the camera."""
         processed_dict = {}
@@ -84,16 +101,22 @@ class VirtualCamera:
                 self.camera.take_picture()
                 rgba_camera = self.camera.get_picture('Color')
                 camera_color = np.clip(rgba_camera * 255, 0, 255).astype(np.uint8)
+                if self.rotate_images:
+                    camera_color = cv2.rotate(camera_color, cv2.ROTATE_180)
                 processed_dict['Color'] = camera_color
             elif img_type == 'Depth':
                 self.camera.take_picture()
                 position = self.camera.get_picture('Position')
-                depth = (-position[..., 2] * 1000.0).astype(np.uint16)
+                depth = (-position[..., 2] * 1000.0).astype(np.uint8)
+                if self.rotate_images:
+                    depth = cv2.rotate(depth, cv2.ROTATE_180)
                 processed_dict['Depth'] = depth
             elif img_type == 'Segmentation':
                 self.camera.take_picture()
                 seg_labels = self.camera.get_picture('Segmentation')
-                segmentation = seg_labels[..., 0].astype(np.uint32)
+                segmentation = seg_labels[..., 0].astype(np.uint8)
+                if self.rotate_images:
+                    segmentation = cv2.rotate(segmentation, cv2.ROTATE_180)
                 processed_dict['Segmentation'] = segmentation
             else:
                 raise ValueError(f"Unsupported image type: {img_type}")

@@ -3,3 +3,4 @@ matplotlib
 numpy
 opencv-python
 numpy-quaternion
+numba
