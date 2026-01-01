@@ -1,4 +1,33 @@
-import numpy as np
+import os
+
+host = ""
+for host_var in ['SESSION_MANAGER', 'HOSTNAME']:
+    if host_var in os.environ:
+        host = os.environ[host_var].split(',')[0].split(':')[0].split('/')[1] 
+print(f"Current host: {host}")
+if host == 'PT-PC-OptiPlex-7060':
+    print("""
+#################################################
+########  Le CPU ne tient pas la charge  ########
+#################################################
+    """)
+    # Set the VK_ICD_FILENAMES environment variable
+    os.environ['VK_ICD_FILENAMES'] = '/usr/share/vulkan/icd.d/lvp_icd.x86_64.json'
+
+try:
+    import time
+    import cv2
+    import queue
+    import numpy as np
+except Exception as e:
+    print(f"IMPORT ERROR ! ({e})")
+    print("""
+> Run 'make environment' to setup the python venv and install the required modules
+
+> Run 'make install' to install the required modules
+     """)
+    exit(1)
+
 
 TABLE_HEIGHT = 0.1
 TABLE_LENGTH = 3
